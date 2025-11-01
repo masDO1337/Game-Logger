@@ -1,6 +1,6 @@
-# Discord Bot
+# Game Logger
 
-A simple, configurable Discord bot project. This README covers setup, configuration, usage, development and deployment notes.
+A simple Discord bot project. This README covers setup, configuration, usage and development notes.
 
 ## Features
 - Modular command handler
@@ -24,11 +24,10 @@ npm install
 
 2. Create a `.env` file in the project root:
 ```env
-DISCORD_TOKEN=your-bot-token
-CLIENT_ID=your-application-client-id
-GUILD_ID=optional-test-guild-id
-NODE_ENV=development
-PREFIX=!
+PORT=8000
+TOKEN="Your Discord Bot Token Here"
+MONGODB_URI="Your MongoDB Connection String Here"
+LOAD_BOT_EVENTS=true
 ```
 
 3. Run the bot:
@@ -37,33 +36,6 @@ npm start
 # or in development
 npm run dev
 ```
-
-## Configuration
-- DISCORD_TOKEN: Bot token from the Discord Developer Portal.
-- CLIENT_ID: Application client ID (used for registering slash commands).
-- GUILD_ID: (Optional) Test guild ID for rapid command registration.
-- PREFIX: Command prefix for legacy/message commands.
-
-## Commands
-- /help or !help — list commands
-- /ping or !ping — latency check
-- /info or !info — bot info
-
-(Add additional commands in the commands/ or src/commands directory following the project structure.)
-
-## Development
-- Linting:
-```bash
-npm run lint
-```
-- Tests (if present):
-```bash
-npm test
-```
-
-## Deployment
-- Use a process manager (pm2) or containerize (Docker) for production.
-- Make sure to keep DISCORD_TOKEN secret and rotate if leaked.
 
 ## Contributing
 - Follow existing code style.
