@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title><%= title || 'Discord Bot' %></title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .grid { text-align: left; }
+        .card { max-width: 100%; position: relative; };
+        .meta {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .meta { width: auto; color: var(--muted); font-size: 13px; margin-bottom:8px; }
+        .stat-grid { display:flex; gap:12px; margin-top:12px; flex-direction: column; }
+        .stat { flex:1; display: flex; background:#0b1220; padding:16px; border-radius:6px; text-align:center; }
+        .log-entries {
+            display: block;
+            padding: 16px;
+            overflow: auto;
+            border-radius: 6px;
+            background: #0b1220;
+            max-height: 100%;
+        }
+        .log-entries::-webkit-scrollbar { width: 8px; }
+        .log-entries::-webkit-scrollbar-thumb { background: #2b4579; border-radius: 8px; }
+        .log-entry {
+            display: flex;
+            font-size: 13px;
+            padding: 0;
+            margin: 0;
+            white-space: nowrap;
+            margin: 3px 0;
+        }
+        .muted {
+            margin-right: 5px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+            header div {
+                text-align: center;
+            }
+            .log-entry {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid" style="grid-template-columns: 1fr 1.5fr;">
+        <div class="card" role="main">
+            <header>
+                <div class="logo">
+                    <img src="<%= session.avatar %>" alt="avatar">
+                </div>
+                <div class="center">
+                    <h1><%= session.name || 'My Username' %></h1>
+                    <p style="margin: 0; font-size: 13px;"><span class="muted">ID: </span><%= session.userId %></p>
+                </div>
+                <a type="button" class="btn" href="/logout">Logout</a>
+            </header>
+
+            <div class="grid">
+                <section class="panel">
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div>Information Collection Started: <%= new Date('2025-10-29T05:10:32.475Z').toLocaleString() %></div>
+                        </div>
+                        <div class="stat">
+                            <div>List of guilds and analytics in database.</div>
+                            <div style="margin-left: auto;">
+                                <a class="btn" href="/guild">List Guilds</a>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <div>List of gamas and analytics in database.</div>
+                            <div style="margin-left: auto;">
+                                <a class="btn" href="/game">List Games</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <footer>
+                <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+            </footer>
+        </div>
+        <div class="card" role="log">
+            <header>
+                <h2 style="margin: 2px 2px 2px 0;">Activity Log</h2>
+            </header>
+            <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions">
+                <% logs.forEach(log => { %>
+                    <div class="log-entry">
+                        <span class="muted">[ <%= new Date(log.timestamp).toLocaleString('lt-LT') %> ]</span>
+                        <%= log.message %>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+    <script>
+        const logEntries = document.getElementById('log-entries');
+
+        const evtSource = new EventSource('/events/logs');
+        evtSource.onmessage = function(event) {
+            const log = JSON.parse(event.data);
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
+            logEntries.appendChild(logEntry);
+            if (logEntries.scrollHeight > logEntries.clientHeight) {
+                logEntries.style.scrollBehavior = 'smooth';
+            }
+            logEntries.scrollTop = logEntries.scrollHeight;
+        };
+        logEntries.scrollTop = logEntries.scrollHeight;
+    </script>
+</body>
+</html>

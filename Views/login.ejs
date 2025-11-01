@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title><%= title || 'Discord Bot' %></title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .meta {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .meta { width: auto; color: var(--muted); font-size: 13px; margin-bottom:8px; }
+        .stat-grid { display:flex; gap:12px; margin-top:12px; flex-direction: column; }
+        .stat { flex:1; display: flex; background:#0b1220; padding:16px; border-radius:6px; text-align:center; }
+        .stat form {
+            margin: 0 auto;
+            max-width: 240px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <header>
+            <div class="logo"><img src="<%= botAvatar %>" alt="logo"></div>
+            <div style="display: block; text-align: left;">
+                <h1><%= botName || 'My Discord Bot' %></h1>
+                <p class="muted">A helpful Discord bot records user activity and displays analytics on the website built with Node.js.</p>
+            </div>
+            <div class="status" aria-live="polite">
+                <% if (botOnline) { %>
+                    <span class="dot" style="background:var(--success)"></span> Online
+                <% } else { %>
+                    <span class="dot" style="background:var(--danger)"></span> Offline
+                <% } %>
+            </div>
+        </header>
+
+        <div class="grid">
+            <section class="panel">
+                <div class="stat-grid">
+                    <div class="stat">
+                        <form action="/" method="post">
+                            <h1 style="margin: 0 0 16px 0;">Login</h1>
+                            <div class="input-group" style="margin-bottom: 8px;">
+                                <input type="text" name="userId" autocomplete="off" required>
+                                <label for="userId">Enter Discord User ID</label>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+        </footer>
+    </div>
+</body>
+</html>

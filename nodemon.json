@@ -1,0 +1,22 @@
+{
+    "restartable": "",
+    "ignore": [
+        ".git",
+        "node_modules/**/node_modules",
+        "public/**"
+    ],
+    "watch": [
+        "app.js",
+        "Logger.js",
+        "web-server.js",
+        "Routes/",
+        "Middleware/",
+        "DiscordEvents/",
+        "DBModels/",
+        "DBFunctions/"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "js,json"
+}

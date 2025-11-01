@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title><%= username + ' — User Profile' %></title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .card { max-width:1200px; }
+        .grid{
+            grid-template-columns: 1.8fr 1fr;
+            align-items: start;
+        }
+        .profile {
+            display: flex;
+            gap: 16px;
+        }
+        .meta h1 { margin: 0 0 4px 0; font-size: 20px; }
+        .meta { color: var(--muted-text); font-size: 13px; margin-bottom:8px; }
+        .stat-grid { display:flex; gap:12px; margin-top:12px; }
+        .stat { flex:1; background:#0b1220; padding:8px; border-radius:6px; text-align:center; }
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0b1220;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: white;
+        }
+        .roles { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; justify-content: center; }
+        .role { padding:6px 8px; border-radius:6px; font-size:13px; background:#0b1220; }
+        .activities-list {
+            display:grid;
+            gap:8px;
+            margin-top:8px;
+            max-height: 55vh;
+            overflow: auto;
+            padding-right: 8px;
+        }
+        .activities-list::-webkit-scrollbar { width: 8px; }
+        .activities-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
+        .activitie-pill {
+            display: grid;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            background: #0b1220;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition:all 0.2s;
+        }
+        .activitie-pill:first-child {
+            text-overflow: clip;
+        }
+        .activitie-pill:hover { background:var(--accent); color:white; transform:translateY(-1px); }
+        .activity-elapsed, .activity-time {
+            color: var(--time);
+            margin: 0 auto;
+            font-family: monospace;
+            text-align: left;
+            transition:all 0.2s;
+        }
+        .activitie-pill:hover .activity-time {
+            color: white;
+        }
+        @media (max-width:800px) {.stat-grid { flex-direction: column; gap: 0;} .activitie-pill {flex-direction: column;} .activitie-pill {padding: 0;}}
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <header>
+            <button type="button" class="btn" onclick="history.back()">
+                <span aria-hidden="true"><</span>
+                Back
+            </button>
+            <a type="button" class="btn" href="/">
+                Home
+            </a>
+            <div class="logo">
+                <img src="<%= session.avatar %>" alt="avatar">
+            </div>
+            <div class="center">
+                <h1><%= session.name || 'My Username' %></h1>
+                <p style="margin: 0; font-size: 13px;"><span class="muted">ID: </span><%= session.userId %></p>
+            </div>
+            <a type="button" class="btn" href="/logout">Logout</a>
+        </header>
+        <div class="grid">
+            <section class="panel" aria-label="User profile">
+                <div class="profile">
+                    <div class="logo-128" aria-hidden="false">
+                        <img src="<%= (member.user.displayAvatarURL && member.user.displayAvatarURL({ size: 128 })) %>" alt="User icon">
+                    </div>
+                    <div class="meta center">
+                        <div><h1><%= username %></h1></div>
+                        <div><span class="muted">ID: </span><%= member.user.id %></div>
+                        <div><span class="muted">Tag: </span><%= member.user.tag %></div>
+                        <% if (member.nickname) { %>
+                            <div><span class="muted">Nickname: </span><%= member.nickname %></div>
+                        <% } %>
+                    </div>
+                    <div>
+                        <div class="status" aria-live="polite">
+                            <% if (member.presence) { %>
+                                <% if (member.presence.status == 'online') { %>
+                                    <span class="dot" style="background:var(--success)"></span> Online
+                                <% } else if (member.presence.status == 'idle') { %>
+                                    <span class="dot" style="background:var(--warning)"></span> Idle
+                                <% } else if (member.presence.status == 'dnd') { %>
+                                    <span class="dot" style="background:var(--danger)"></span> Do Not Disturb
+                                <% } else { %>
+                                    <span class="dot" style="background:var(--muted)"></span> Offline
+                                <% } %>
+                            <% } else { %>
+                                <span class="dot" style="background:var(--muted)"></span> Offline
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <div class="muted">Account Created</div>
+                            <div><%= new Date(member.user.createdAt).toLocaleDateString('lt-LT', { year: 'numeric', month: 'numeric', day: 'numeric' }) %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="muted">Guild</div>
+                            <div><%= guild.name %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="muted">Guild Joined</div>
+                            <div><%= new Date(member.joinedAt).toLocaleDateString('lt-LT', { year: 'numeric', month: 'numeric', day: 'numeric' }) %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="muted">Bot</div>
+                            <div><%= member.user.bot ? 'Yes' : 'No' %></div>
+                        </div>
+                        <% if (member.user.flags.toArray().length > 0) { %>
+                            <div class="stat">
+                                <div class="muted">Public Flags</div>
+                                <div><%= member.user.flags.toArray().join(', ') %></div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin:16px 0 8px 0">Roles</h4>
+                    <% if (member.roles) { %>
+                        <div class="roles">
+                            <% Array.from(member.roles.cache.values()).forEach(function(r){ %>
+                                <% if (r.id != member.guild.id) { %>
+                                    <div class="role" <% if (r.color != 0) { %> style="color: #<%=r.color.toString(16)%>;"<% } %> title="<%= r.name %>">
+                                        <%= r.name %>
+                                    </div>
+                                <% } %>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="muted">No roles available</div>
+                    <% } %>
+                </div>
+            </section>
+            <section class="panel" aria-label="User activities">
+                <div>
+                    <% if (member.presence && member.presence.activities.length > 0) { %>
+                        <h4 style="margin: 16px 0 8px 0;">Activities</h4>
+                        <div class="roles">
+                            <% member.presence.activities.forEach(function(activity) { %>
+                                <div class="role" title="<%= activity.name %>">
+                                    <div>
+                                        <%= activity.name %>
+                                        <span class="activity-elapsed" data-created-at="<%= activity.createdAt %>">
+                                        </span>
+                                    </div>
+                                    <div><span class="muted">Type:</span>
+                                        <% if (activity.type == 0) { %>
+                                            Playing
+                                        <% } else if (activity.type == 1) { %>
+                                            Streaming
+                                        <% } else if (activity.type == 2) { %>
+                                            Listening
+                                        <% } else if (activity.type == 3) { %>
+                                            Watching
+                                        <% } else if (activity.type == 4) { %>
+                                            Custom
+                                        <% } else if (activity.type == 5) { %>
+                                            Competing
+                                        <% } else if (activity.type == 6) { %>
+                                            Hanging Out
+                                        <% } else { %>
+                                            Unknown
+                                        <% } %>
+                                    </div>
+                                    <% if (activity.details) {%>
+                                        <div><span class="muted">Details:</span><%= activity.details %></div>
+                                    <% } %>
+                                    <% if (activity.state) {%>
+                                        <div><span class="muted">State:</span><%= activity.state %></div>
+                                    <% } %>
+
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </div>
+                <div>
+                    <h4 style="margin: 16px 0 8px 0;">History Activities</h4>
+                    <% if (history && history.length > 0) { %>
+                        <div class="activities-list">
+                            <% history.forEach(function(activity) { %>
+                                <a class="activitie-pill" href="/game/<%=(activity.gameDB || "") %>">
+                                    <div><%= activity.name %></div>
+                                    <div class="activity-time">
+                                        <div>
+                                            <span class="muted">Play:</span>
+                                            <% 
+                                            const elapsedSec = Math.floor((new Date(activity.stop).getTime() - new Date(activity.start).getTime()) / 1000);
+                                            %>
+                                            <%= 
+                                            String(Math.floor(elapsedSec / 3600)).padStart(2, '0') + 
+                                            ":" + 
+                                            String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0') + 
+                                            ":" + 
+                                            String(elapsedSec % 60).padStart(2, '0')
+                                            %>
+                                        </div>
+                                        <div>
+                                            <span class="muted">Total Play:</span>
+                                            <% 
+                                            const fullSec = Math.floor((new Date(activity.stop).getTime() - new Date(activity.createdAt).getTime()) / 1000);
+                                            %>
+                                            <%= 
+                                            String(Math.floor(fullSec / 3600)).padStart(2, '0') + 
+                                            ":" + 
+                                            String(Math.floor((fullSec % 3600) / 60)).padStart(2, '0') + 
+                                            ":" + 
+                                            String(fullSec % 60).padStart(2, '0')
+                                            %>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="muted">No history activities available</div>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+        <footer>
+            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></div>
+        </footer>
+    </div>
+    <script>
+        (function(){
+            if (window.__activityTimerInitialized) return;
+            window.__activityTimerInitialized = true;
+            function updateTimers(){
+                document.querySelectorAll('.activity-elapsed').forEach(function(el) {
+                    var created = new Date(el.getAttribute('data-created-at'));
+                    var diff = Math.floor((Date.now() - created.getTime())/1000);
+                    var h = Math.floor(diff/3600); diff %= 3600;
+                    var m = Math.floor(diff/60);
+                    var s = diff % 60;
+                    el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+                });
+            }
+            updateTimers();
+            setInterval(updateTimers, 1000);
+        })();
+    </script>
+</body>
+</html>

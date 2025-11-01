@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>404</title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .not-found{ text-align:center; padding:40px 20px; }
+        .not-found h2{ font-size:32px; margin-bottom:8px; }
+        .not-found p{ font-size:18px; margin-bottom:24px; color:var(--muted); }
+        .not-found .actions{ display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+        .not-found .btn{ background:var(--accent); color:white; padding:12px 24px; border:none; border-radius:8px; text-decoration:none; font-size:16px; cursor:pointer; transition:all 0.2s; }
+        .not-found .btn:hover{ background:var(--accent-dark); transform:translateY(-1px); }
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+
+        <section class="not-found" aria-labelledby="not-found-title">
+            <h2 id="not-found-title">404 — Page not found</h2>
+            <p><%= message %></p>
+
+            <div class="actions">
+                <a href="/" class="btn">Return to Home</a>
+                <button type="button" class="btn" onclick="history.back()">Go Back</button>
+            </div>
+        </section>
+        
+        <footer>
+            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+        </footer>
+    </div>
+</body>
+</html>

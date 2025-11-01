@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title><%= guild.name + ' — Guild Profile' %></title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .card { max-width:1200px; }
+        .grid{
+            grid-template-columns: 1.5fr 1fr;
+            align-items: start;
+        }
+
+        .profile {
+            display: flex;
+            gap: 16px;
+        }
+        .info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .meta h1 { margin: 0 0 4px 0; font-size: 20px; }
+        .meta { color: var(--muted-text); font-size: 13px; margin-bottom:8px; }
+        .stat-grid { display:flex; gap:12px; margin-top:12px; }
+        .stat { flex:1; background:#0b1220; padding:8px; border-radius:6px; text-align:center; }
+        .members-list {
+            display:grid;
+            gap:8px;
+            margin-top:8px;
+            max-height: 55vh;
+            overflow: auto;
+            padding-right: 8px;
+        }
+        .members-list::-webkit-scrollbar { width: 8px; }
+        .members-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
+        .member-pill, .channel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            background: #0b1220;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .member-pill:hover { 
+            background:var(--accent); 
+            color:white; 
+            transform:translateY(-1px); 
+            cursor: pointer;
+        }
+        .roles, .channels { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+        .role { padding:6px 8px; border-radius:6px; font-size:13px; background:#0b1220; }
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <header>
+            <button type="button" class="btn" onclick="history.back()"><span aria-hidden="true"><</span>Back</button>
+            <a type="button" class="btn" href="/">Home</a>
+            <div class="logo"><img src="<%= session.avatar %>" alt="avatar"></div>
+            <div class="center">
+                <h1><%= session.name || 'My Username' %></h1>
+                <p style="margin: 0; font-size: 13px;"><span class="muted">ID: </span><%= session.userId %></p>
+            </div>
+            <a type="button" class="btn" href="/logout">Logout</a>
+        </header>
+
+        <div class="grid">
+            <section class="panel" aria-label="Guild profile">
+                <div class="profile">
+                    <div class="logo-128" aria-hidden="false">
+                        <img src="<%= (guild.iconURL && guild.iconURL({ size: 128 })) %>" alt="Guild icon">
+                    </div>
+                    <div class="meta info">
+                        <h1><%= guild.name %></h1>
+                        <div><span class="muted">ID:</span> <%= guild.id %></div>
+                        <div class="muted"><%= guild.description || '' %></div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="stat-grid" role="group" aria-label="Guild stats">
+                        <div class="stat">
+                            <div class="muted">Members</div>
+                            <div><strong><%= guild.memberCount || '—' %></strong></div>
+                        </div>
+                        <div class="stat">
+                            <div class="muted">Channels</div>
+                            <div><strong><%= Array.from(guild.channels.cache.values()).filter(c => {return c.type == 0 || c.type == 2}).length || '—' %></strong></div>
+                        </div>
+                        <div class="stat">
+                            <div class="muted">Roles</div>
+                            <div><strong><%= (Array.from(guild.roles.cache.values()).length) || '—' %></strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <% if (guild.roles && guild.roles.cache) { %>
+                        <h4 style="margin:16px 0 8px 0">Roles</h4>
+                        <div class="roles">
+                            <% Array.from(guild.roles.cache.values()).forEach(function(r){ %>
+                                <div 
+                                    class="role"
+                                    <% if (r.color != 0) { %> 
+                                    style="color: #<%=r.color.toString(16)%>;"
+                                    <% } %>
+                                    title="<%= r.name %>"><%= r.name %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <h4 style="margin:16px 0 8px 0">Roles</h4>
+                        <div class="muted">No roles available</div>
+                    <% } %>
+                </div>
+                <div>
+                    <% if (guild.channels && guild.channels.cache) { %>
+                        <% let channels = Array.from(guild.channels.cache.values()) %>
+                        <h3 style="margin:16px 0 8px 0">Text channels</h3>
+                        <div class="channels">
+                            <% channels.filter(c => {return c.type == 0}).forEach(function(channel){ %>
+                                <div class="channel" title="<%= channel.name %>">
+                                    <div>#</div>
+                                    <div><%= channel.name %></div>
+                                </div>
+                            <% }) %>
+                        </div>
+                        <h3 style="margin:16px 0 8px 0">Voice channels</h3>
+                        <div class="channels" style="margin-top:8px;">
+                            <% channels.filter(c => {return c.type == 2}).forEach(function(channel){ %>
+                                <div class="channel" title="<%= channel.name %>">
+                                    <div>🕩</div>
+                                    <div><%= channel.name %></div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <h3 style="margin:0 0 8px 0">Channels</h3>
+                        <div class="muted">No channels available</div>
+                    <% } %>
+                </div>
+            </section>
+            <section class="panel" aria-label="Guild members">
+                <h2 style="margin:0 0 8px 0">Members</h2>
+                <div class="muted" style="margin-bottom:16px">A list of guild members:</div>
+                <div class="members-list">
+                    <% if (guild.members && guild.members.cache) { %>
+                        <% Array.from(guild.members.cache.values()).forEach(function(member){ %>
+                            <a href="/user/<%= guild.id +'/'+ member.user.id %>" class="member-pill" title="<%= member.user.username %>">
+                                <div class="logo-32">
+                                    <img src="<%= member.user.displayAvatarURL({ size: 32 }) %>" alt="Member avatar">
+                                </div>
+                                <div>
+                                    <%= member.user.globalName == null ? member.user.username : member.user.globalName %>
+                                    <span class="muted" style="margin-left: 6px;"><%= member.user.tag %></span>
+                                </div>
+                            </a>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="muted">No members available</div>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+        <footer>
+            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+        </footer>
+    </div>
+</body>
+</html>

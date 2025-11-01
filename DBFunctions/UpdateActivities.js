@@ -1,0 +1,75 @@
+const UserModel = require('../DBModels/User');
+const updateGame = require('./UpdateGame');
+const log = require('../Logger');
+
+async function updateActivities(presence) {
+
+    // Filter only 'Playing' activities
+    const activities = (presence.activities || [])
+        .filter((a) => a.type === 0)
+        .map((activity) => {
+            return {
+                name: activity.name,
+                applicationId: activity.applicationId,
+                start: new Date(activity.createdAt)
+            };
+        });
+
+    let userData = await UserModel.findOne({ userId: presence.userId });
+    if (userData) {
+
+        // Update activities with start time from if existing in database
+        activities.forEach((activity, index) => {
+            userData.activities.forEach(a => {
+                if (a.name === activity.name) activities[index].start = a.start;
+            });
+        });
+
+        if (JSON.stringify(userData.activities) === JSON.stringify(activities)) return;
+
+        let updateHistory = false;
+        let updateHistoryEntry = { name: '', applicationId: null, start: null, stop: null, createdAt: null };
+
+        // Check for started and stopped activities
+        activities.forEach(activity => {
+            if (!userData.activities.find(a => a.name === activity.name)) {
+                log(`User ${presence.user.tag} started game: ${activity.name}`);
+            }
+        });
+
+        userData.activities.forEach(activity => {
+            if (!activities.find(a => a.name === activity.name)) {
+                updateHistoryEntry = { ...activity, stop: new Date()}
+                updateHistory = true;
+                log(`User ${presence.user.tag} stopped game: ${activity.name}`);
+            }
+        });
+
+        if (updateHistory) {
+            // Update history
+
+            const index = userData.history.findIndex(a => a.name === updateHistoryEntry.name);
+
+            if (index === -1) {
+                updateHistoryEntry.createdAt = updateHistoryEntry.start;
+                userData.history.push(updateHistoryEntry);
+            } else {
+                userData.history[index].start = updateHistoryEntry.start;
+                userData.history[index].stop = updateHistoryEntry.stop;
+                updateHistoryEntry.createdAt = userData.history[index].createdAt;
+            }
+
+            await updateGame(userData.userId, updateHistoryEntry);
+        }
+
+        userData.activities = activities;
+        try {
+            if (!await userData.save()) {
+                console.log(`Failed to update activities for user ${presence.user.tag}`);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    } else console.log(`Failed to find database entry for user ${presence.user.tag}`);
+}
+module.exports = updateActivities;
