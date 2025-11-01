@@ -154,9 +154,7 @@ h1 {
     border-radius: 8px;
     text-decoration: none;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-flex;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.2s;
