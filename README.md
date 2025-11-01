@@ -2,12 +2,6 @@
 
 A simple Discord bot project. This README covers setup, configuration, usage and development notes.
 
-## Features
-- Modular command handler
-- Slash command support
-- Permission checks and basic logging
-- Environment-driven configuration
-
 ## Requirements
 - Node.js 18+ (or update to desired runtime)
 - npm or yarn
