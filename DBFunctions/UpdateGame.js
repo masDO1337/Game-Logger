@@ -1,4 +1,5 @@
 const GameModel = require('../DBModels/Game');
+const log = require('../Logger');
 
 async function getApplication(id) {
     const url = `https://discord.com/api/v10/applications/${id}/rpc`;
@@ -55,7 +56,7 @@ async function updateGame(userId, game, ifNameOnly = false) {
         }
 
         if (await GameModel.create(body)) {
-            console.log(`Created database entry for game ${game.name}`);
+            log(`Created database entry for game ${game.name}`);
         } else {
             console.log(`Failed to create database entry for game ${game.name}`);
         }
@@ -76,8 +77,10 @@ async function updateGame(userId, game, ifNameOnly = false) {
         }
 
         try {
-            if (!await gameData.save()) {
-                console.log(`Failed to update users for game ${gameData.name}`);
+            if (await gameData.save()) {
+                log(`Updated database entry for game ${gameData.name}`);
+            } else {
+                console.log(`Failed to update database entry for game ${gameData.name}`);
             }
         } catch (error) {
             console.error(error);
