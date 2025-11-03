@@ -9,10 +9,13 @@ const game = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-    userId: { type: String, required: true, immutable: true },
-    activities: { type: Array, required: false, default: [] },
-    history: [game],
-    historyStatus: { type: Array, required: false, default: [] },
+  userId: { type: String, required: true, immutable: true },
+  password: { type: String, required: false, default: '' },
+  activities: { type: Array, required: false, default: [] },
+  history: [game],
+  historyStatus: { type: Array, required: false, default: [] },
+  refreshToken: { type: String, required: false },
+  role: { type: String, required: true, default: 'user' }
 });
 
 const User = mongoose.model('User', userSchema);

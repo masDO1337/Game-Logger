@@ -1,16 +1,102 @@
-const verify = async (req, res, next) => {
-    if (req.session.login == undefined) req.session.login = false;
-    if (!req.session.login) {
-        res.status(404);
-        if (req.accepts('html')) return res.render('404', {
-            title: "404 - Not Found", 
-            message: "The page you are looking for does not exist.", 
-            owner: 'masDO1337' 
-        });
-        if (req.accepts('json')) return res.json({ error: 'Not Found' });
-        res.type('txt').send('Not Found');
+const jwt = require('jsonwebtoken');
+const UserModel = require('../DBModels/User');
+
+async function refreshToken(req, res, next) {
+    const refreshToken = req.cookies?.refreshToken || null;
+    if (!refreshToken) {
+        req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
+        return res.redirect("/login");
     }
-    next();
+
+    let userData = await UserModel.findOne({ refreshToken: refreshToken }).select('userId');
+    
+    if (!userData) {
+        console.log("Refresh token not found in database, logging out user.");
+        req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
+        res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+        return res.redirect("/login");
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            console.log("Invalid refresh token, logging out user.");
+            req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
+            res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+            return res.redirect("/login");
+        } else {
+            const payload = { username: user.username, role: user.role, id: user.id };
+            const newAccessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+            req.session.accessToken = newAccessToken;
+            next();
+        }
+    });
+
+}
+
+async function restoreSession(req, res, next) {
+    const refreshToken = req.cookies.refreshToken || null;
+
+    if (!refreshToken) return res.redirect("/login");
+
+    let userData = await UserModel.findOne({ refreshToken: refreshToken }).select('userId');
+    
+    if (!userData) {
+        console.log("Refresh token not found in database, logging out user.");
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true });
+        return res.redirect("/login");
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            console.log("Invalid refresh token, logging out user.");
+            res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+            return res.redirect("/login");
+        } else {
+            const payload = { username: user.username, role: user.role, id: user.id };
+            const newAccessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+            req.session.accessToken = newAccessToken;
+        }
+    });
+
+    let user = await global.client.users.fetch(userData.userId).catch(() => null);
+
+    if (!user || user.bot) return res.redirect("/login");
+
+    if (user && !user.bot) {
+        req.session.userId = userData.userId;
+        req.session.name = user.tag;
+        req.session.avatar = user.displayAvatarURL({ size: 64 });
+        req.session.role = userData.role || "user";
+        next();
+    } else res.redirect("/login");
+}
+
+
+const verify = async (req, res, next) => {
+    if (req.session.accessToken) {
+
+        let requireRefresh = false;
+        
+        jwt.verify(req.session.accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err && err.name !== 'TokenExpiredError') {
+                // Token is invalid
+                console.log("Invalid access token, logging out user.");
+                req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) })
+                res.clearCookie('refreshToken', { httpOnly: true, secure: true });
+                res.redirect("/login");
+            } else if (err && err.name === 'TokenExpiredError') {
+                // Token has expired
+                requireRefresh = true;
+            } else {
+                // Token is valid
+                next();
+            }
+        });
+
+        if (requireRefresh) await refreshToken(req, res, next);
+
+    }
+    else return restoreSession(req, res, next);
 };
 
 module.exports = verify;

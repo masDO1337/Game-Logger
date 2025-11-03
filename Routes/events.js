@@ -26,18 +26,17 @@ function eventHead(res, interval) {
 
 router.get('/logs', (req, res) => {
 
-    let oldLog = null;
+    let oldLog = [];
 
     if (global.logs && global.logs.length > 0) {
-      oldLog = JSON.stringify(global.logs[global.logs.length - 1]);
+      oldLog = global.logs;
     }
 
     eventHead(res, setInterval(() => {
         if (global.logs && global.logs.length > 0) {
-            const log = JSON.stringify(global.logs[global.logs.length - 1]);
-            if (log === oldLog) return;
-            oldLog = log;
-            res.write(`data: ${log}\n\n`);
+            let newLogs = global.logs.filter((item) => !oldLog.includes(item));
+            oldLog = global.logs;
+            newLogs.forEach(log => res.write(`data: ${JSON.stringify(log)}\n\n`));
         }
     }, 1000));
     

@@ -197,12 +197,24 @@ h1 {
     border: 1.5px solid var(--accent);
 }
 
+.input-group input:not(:placeholder-shown):not(:focus):invalid {
+    outline: none;
+    border: 1.5px solid var(--danger);
+}
+
 .input-group input:focus~label,
 .input-group input:valid~label {
     transform: translateX(-10%) translateY(-50%) scale(0.8);
     background-color: #0b1220;
     padding: 0 .2em;
     color: var(--accent);
+}
+
+.input-group input:not(:placeholder-shown):not(:focus):invalid~label {
+    transform: translateX(-10%) translateY(-50%) scale(0.8);
+    background-color: #0b1220;
+    padding: 0 .2em;
+    color: var(--danger);
 }
 
 footer {

@@ -30,11 +30,35 @@ cd <project-root>
 npm install
 ```
 
+### Generating ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET
+
+Use long, cryptographically secure random values (minimum 32 bytes / 256 bits for access tokens; 48–64+ bytes recommended for refresh tokens). Do not hard-code or commit them — store them in env vars or a secrets manager.
+
+Examples:
+
+- Node.js:
+```bash
+# ACCESS
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# REFRESH
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+- Password manager or secret store (recommended for production):
+Use a vault or secret manager (AWS Secrets Manager, Azure Key Vault, Google Secret Manager, 1Password, Bitwarden) to generate and inject secrets into your deployment.
+
+Notes:
+- Keep ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET different.
+- Rotate secrets periodically and revoke/refresh tokens if secrets change.
+
 2. Create a `.env` file in the project root:
 ```env
 PORT=8000
 TOKEN="Your Discord Bot Token Here"
 MONGODB_URI="Your MongoDB Connection String Here"
+ACCESS_TOKEN_SECRET="Enter your access token secret here"
+REFRESH_TOKEN_SECRET="Enter your refresh token secret here"
 LOAD_BOT_EVENTS=true
 ```
 

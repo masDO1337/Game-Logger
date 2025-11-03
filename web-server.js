@@ -1,7 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const express = require("express");
-const session = require("express-session")
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.set("views", path.join(__dirname, "Views"));
 app.use(express.static(path.join(__dirname, "Public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(session({ secret: process.env.TOKEN, resave: false, saveUninitialized: false }));
 
 const routesPath = path.join(__dirname, 'Routes');

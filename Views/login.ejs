@@ -20,6 +20,13 @@
             margin: 0 auto;
             max-width: 240px;
         }
+        .error {
+            margin-bottom: 16px;
+            white-space: nowrap;
+            color: var(--danger);
+            text-align: center;
+            font-size: small;
+        }
     </style>
 </head>
 <body>
@@ -41,14 +48,25 @@
 
         <div class="grid">
             <section class="panel">
+                <% if (error) { %>
+                    <div class="error"><%= error %></div>
+                <% } %>
                 <div class="stat-grid">
                     <div class="stat">
-                        <form action="/" method="post">
+                        <form action="/login" method="post">
                             <h1 style="margin: 0 0 16px 0;">Login</h1>
+                            <% if (!password) { %>
                             <div class="input-group" style="margin-bottom: 8px;">
-                                <input type="text" name="userId" autocomplete="off" required>
+                                <input type="text" name="userId" autocomplete="off" placeholder=" " required>
                                 <label for="userId">Enter Discord User ID</label>
                             </div>
+                            <% } else { %>
+                                <div class="input-group" style="margin-bottom: 12px;">
+                                    <input type="password" name="password" autocomplete="off" placeholder=" " required>
+                                    <label for="userId">Enter Password</label>
+                                </div>
+                                <input type="hidden" name="userId" value="<%= userId %>" required>
+                            <% } %>
                             <button type="submit" class="btn" style="width: 100%;">Login</button>
                         </form>
                     </div>
