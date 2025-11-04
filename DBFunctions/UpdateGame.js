@@ -29,6 +29,11 @@ async function updateGame(userId, game, ifNameOnly = false) {
         return;
     }
 
+    if (game.applicationId === "438122941302046720") {
+        log(`Game ID: ${game.applicationId} is Xbox, Set find DB by name ${game.name}`);
+        ifNameOnly = true;
+    }
+
     if (ifNameOnly) {
         gameData = await GameModel.findOne({ name: game.name });
     } else {
