@@ -53,17 +53,17 @@ async function restoreSession(req, res, next) {
         }
     });
 
+    req.session.userId = userData.userId;
+    req.session.role = userData.role || "user";
+
     let user = await global.client.users.fetch(userData.userId).catch(() => null);
 
-    if (!user || user.bot) return res.redirect("/login");
-
-    if (user && !user.bot) {
-        req.session.userId = userData.userId;
+    if (user) {
         req.session.name = user.tag;
         req.session.avatar = user.displayAvatarURL({ size: 64 });
-        req.session.role = userData.role || "user";
-        next();
-    } else res.redirect("/login");
+        log(`Website restored session for user: ${user.tag} (${userData.userId})`);
+    } else log(`Website restored session for user: (${userData.userId})`);
+    next();
 }
 
 
