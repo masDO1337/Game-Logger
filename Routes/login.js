@@ -71,7 +71,9 @@ router.post('/', async (req, res) => {
             id: userData._id
         };
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+        let refreshToken = userData.refreshToken || '';
+
+        if (!refreshToken) refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
         req.session.accessToken = accessToken;
         req.session.userId = userId;
