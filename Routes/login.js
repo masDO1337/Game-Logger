@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const log = require("../Logger");
 const UserModel = require('../DBModels/User');
 const bcrypt = require('bcrypt');
 const router = express.Router();
@@ -33,71 +34,61 @@ router.post('/', async (req, res) => {
 
     let userData = await UserModel.findOne({ userId: userId });
 
-    if (userData){
+    if (!userData) return res.redirect("/login");
 
-        if (userData.password) {
-            const inputPassword = req.body.password || '';
-            if (!inputPassword) {
-                return res.render("login", {
-                    title: "Login",
-                    botAvatar: global.client.user.displayAvatarURL({ size: 64 }),
-                    botName: global.client.user.username,
-                    botOnline: global.client.ws.status === 0,
-                    userId: userId,
-                    password: true,
-                    owner: 'masDO1337',
-                    error: ''
-                });
-            }
-
-            const passwordMatch = await bcrypt.compare(inputPassword, userData.password);
-            if (!passwordMatch) {
-                return res.render("login", {
-                    title: "Login",
-                    botAvatar: global.client.user.displayAvatarURL({ size: 64 }),
-                    botName: global.client.user.username,
-                    botOnline: global.client.ws.status === 0,
-                    userId: userId,
-                    password: true,
-                    owner: 'masDO1337',
-                    error: 'Invalid password. Please try again.'
-                });
-            }
+    if (userData.password) {
+        const inputPassword = req.body.password || '';
+        if (!inputPassword) {
+            return res.render("login", {
+                title: "Login",
+                botAvatar: global.client.user.displayAvatarURL({ size: 64 }),
+                botName: global.client.user.username,
+                botOnline: global.client.ws.status === 0,
+                userId: userId,
+                password: true,
+                owner: 'masDO1337',
+                error: ''
+            });
         }
 
-        const payload = {
-            username: user.tag,
-            role: userData.role || 'user',
-            id: userData._id
-        };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
-        let refreshToken = userData.refreshToken || '';
-
-        if (!refreshToken) refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-
-        req.session.accessToken = accessToken;
-        req.session.userId = userId;
-        req.session.name = user.tag;
-        req.session.avatar = user.displayAvatarURL({ size: 64 });
-        req.session.role = userData.role || "user";
-
-        userData.refreshToken = refreshToken;
-        if (!userData.role) userData.role = 'user';
-
-        try {
-            await userData.save();
-        } catch (err) {
-            console.error("Error saving user data on login:", err);
+        const passwordMatch = await bcrypt.compare(inputPassword, userData.password);
+        if (!passwordMatch) {
+            return res.render("login", {
+                title: "Login",
+                botAvatar: global.client.user.displayAvatarURL({ size: 64 }),
+                botName: global.client.user.username,
+                botOnline: global.client.ws.status === 0,
+                userId: userId,
+                password: true,
+                owner: 'masDO1337',
+                error: 'Invalid password. Please try again.'
+            });
         }
-
-        console.log(`Login in website as ${user.tag}`);
-
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-        if (userData.password) res.redirect("/");
-        else res.redirect('/password');
-    } else {
-        res.redirect("/login");
     }
+
+    const accessToken = jwt.sign({ id: userData._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    const refreshToken = userData.refreshToken || jwt.sign({ id: userData._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+
+    req.session.accessToken = accessToken;
+    req.session.userId = userId;
+    req.session.name = user.tag;
+    req.session.avatar = user.displayAvatarURL({ size: 64 });
+    req.session.role = userData.role || "user";
+
+    userData.refreshToken = refreshToken;
+    if (!userData.role) userData.role = 'user';
+
+    try {
+        await userData.save();
+    } catch (err) {
+        console.error("Error saving user data on login:", err);
+    }
+
+    log(`Login in website as ${user.tag}`);
+
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    if (userData.password) res.redirect("/");
+    else res.redirect('/password');
 });
 
 module.exports = {
