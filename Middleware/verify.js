@@ -63,9 +63,9 @@ async function restoreSession(req, res, next) {
 
     req.session.userId = userData.userId;
     req.session.role = userData.role || "user";
-    req.session.name = user.tag;
-    req.session.avatar = user.displayAvatarURL({ size: 64 });
-    log(`Website restored session for user: ${user.tag}`);
+    req.session.name = User.tag;
+    req.session.avatar = User.displayAvatarURL({ size: 64 });
+    log(`Website restored session for user: ${User.tag}`);
     next();
 }
 
