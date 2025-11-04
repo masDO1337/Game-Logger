@@ -64,12 +64,10 @@ async function updateActivities(presence) {
 
         userData.activities = activities;
         try {
-            if (!await userData.save()) {
-                console.log(`Failed to update activities for user ${presence.user.tag}`);
-            }
+            await userData.save();
         } catch (error) {
-            console.error(error);
+            log.error(`Failed to update activities for user ${presence.user.tag} Error: ${error}`);
         }
-    } else console.log(`Failed to find database entry for user ${presence.user.tag}`);
+    } else log.error(`Failed to find database entry for user ${presence.user.tag}`);
 }
 module.exports = updateActivities;

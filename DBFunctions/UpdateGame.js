@@ -14,7 +14,7 @@ async function getApplication(id) {
     });
 
     if (!resapp.ok) {
-        console.log(`Failed to fetch app for game ID ${game.id}: ${resapp.status}`);
+        log.error(`Failed to fetch app for game ID ${game.id}: ${resapp.status}`);
         return null;
     }
     return await resapp.json();
@@ -25,7 +25,7 @@ async function updateGame(userId, game, ifNameOnly = false) {
     let gameData = null;
 
     if (!game.applicationId) {
-        console.log("No application ID", game);
+        log.error("No application ID", game);
         return;
     }
 
@@ -58,12 +58,12 @@ async function updateGame(userId, game, ifNameOnly = false) {
         if (await GameModel.create(body)) {
             log(`Created database entry for game ${game.name}`);
         } else {
-            console.log(`Failed to create database entry for game ${game.name}`);
+            log.error(`Failed to create database entry for game ${game.name}`);
         }
     } else {
 
         if (game.name !== gameData.name) {
-            console.log(`DB Game: ${gameData.name} no macth ${game.name}`);
+            log(`DB Game: ${gameData.name} no macth ${game.name}`);
             return await updateGame(userId, game, true);
         }
 
@@ -77,13 +77,10 @@ async function updateGame(userId, game, ifNameOnly = false) {
         }
 
         try {
-            if (await gameData.save()) {
-                log(`Updated database entry for game ${gameData.name}`);
-            } else {
-                console.log(`Failed to update database entry for game ${gameData.name}`);
-            }
+            await gameData.save();
+            log(`Updated database entry for game ${gameData.name}`);
         } catch (error) {
-            console.error(error);
+            log.error(`Failed to update database entry for game ${gameData.name}: ${error}`);
         }
     }
 

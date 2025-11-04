@@ -1,9 +1,11 @@
-function log(message) {
+function log(message, type = 'log') {
     if (!global.logs) return;
 
     const timestamp = new Date();
-    global.logs.push({ timestamp: timestamp.toISOString(), message });
-    console.log(`[${timestamp.toLocaleString('lt-LT')}] ${message}`);
+    global.logs.push({ timestamp: timestamp.toISOString(), message, type });
+
+    if (type === 'error') console.log(`[${timestamp.toLocaleString("lt-LT")}] \x1b[31m${message}`);
+    else console.log(`[${timestamp.toLocaleString("lt-LT")}] ${message}`);
 
     // Keep only the latest 100 logs
     if (global.logs.length > 100) {
@@ -12,3 +14,4 @@ function log(message) {
 }
 
 module.exports = log;
+module.exports.error = (message) => log(message, 'error');

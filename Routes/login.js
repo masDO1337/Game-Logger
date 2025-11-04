@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
     try {
         await userData.save();
     } catch (err) {
-        console.error("Error saving user data on login:", err);
+        log.error("Error saving user data on login:", err);
     }
 
     log(`Login in website as ${user.tag}`);

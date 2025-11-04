@@ -2,6 +2,7 @@ const { Events } = require('discord.js');
 const UserModel = require('../DBModels/User');
 const updateActivities = require('../DBFunctions/UpdateActivities');
 const fixGameDB = require('../DBFunctions/FixGameDB');
+const log = require("../Logger");
 
 module.exports = {
 	name: Events.ClientReady,
@@ -17,9 +18,9 @@ module.exports = {
 				let userData = await UserModel.findOne({ userId: memberId });
 				if (!userData) {
 					if (await UserModel.create({ userId: memberId })) {
-						console.log(`Created database entry for user ${member.user.tag}`);
+						log(`Created database entry for user ${member.user.tag}`);
 					} else {
-						console.log(`Failed to create database entry for user ${member.user.tag}`);
+						log.error(`Failed to create database entry for user ${member.user.tag}`);
 					}
 				}
 

@@ -10,7 +10,7 @@ async function refreshToken(req, res, next) {
     }
     
     if (!await UserModel.findOne({ refreshToken: refreshToken }).select('userId')) {
-        log(`Refresh token not found in database, logging out user: ${req.session.name}.`);
+        log.error(`Refresh token not found in database, logging out user: ${req.session.name}.`);
         req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
         res.clearCookie("refreshToken", { httpOnly: true, secure: true });
         return res.redirect("/login");
@@ -18,7 +18,7 @@ async function refreshToken(req, res, next) {
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
-            log(`Invalid refresh token, logging out user: ${req.session.name}.`);
+            log.error(`Invalid refresh token, logging out user: ${req.session.name}.`);
             req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
             res.clearCookie("refreshToken", { httpOnly: true, secure: true });
             return res.redirect("/login");
@@ -38,14 +38,14 @@ async function restoreSession(req, res, next) {
     let userData = await UserModel.findOne({ refreshToken: refreshToken }).select('userId');
     
     if (!userData) {
-        log("Refresh token not found in database, clearing cookie.");
+        log.error("Refresh token not found in database, clearing cookie.");
         res.clearCookie('refreshToken', { httpOnly: true, secure: true });
         return res.redirect("/login");
     }
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
-            log("Invalid refresh token, clearing cookie.");
+            log.error("Invalid refresh token, clearing cookie.");
             res.clearCookie("refreshToken", { httpOnly: true, secure: true });
             return res.redirect("/login");
         } else {
@@ -75,7 +75,7 @@ const verify = async (req, res, next) => {
         jwt.verify(req.session.accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if (err && err.name !== 'TokenExpiredError') {
                 // Token is invalid
-                log(`Invalid access token, logging out user: ${req.session.name}.`);
+                log.error(`Invalid access token, logging out user: ${req.session.name}.`);
                 req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) })
                 res.clearCookie('refreshToken', { httpOnly: true, secure: true });
                 res.redirect("/login");
