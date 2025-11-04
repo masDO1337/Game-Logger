@@ -1,4 +1,5 @@
 const express = require('express');
+const log = require("../Logger");
 const router = express.Router();
 
 // Middleware to verify user is logged in
@@ -29,14 +30,16 @@ router.get('/logs', (req, res) => {
     let oldLog = [];
 
     if (global.logs && global.logs.length > 0) {
-      oldLog = global.logs;
+      oldLog = [...global.logs];
     }
 
     eventHead(res, setInterval(() => {
         if (global.logs && global.logs.length > 0) {
             let newLogs = global.logs.filter((item) => !oldLog.includes(item));
-            oldLog = global.logs;
-            newLogs.forEach(log => res.write(`data: ${JSON.stringify(log)}\n\n`));
+            if (newLogs.length > 0) {
+                oldLog = [...global.logs];
+                newLogs.forEach(log => res.write(`data: ${JSON.stringify(log)}\n\n`));
+            }
         }
     }, 1000));
     
