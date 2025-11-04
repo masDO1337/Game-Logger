@@ -41,6 +41,9 @@
         .muted {
             margin-right: 5px;
         }
+        .error {
+            color: var(--danger);
+        }
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr !important;
@@ -115,7 +118,8 @@
         evtSource.onmessage = function(event) {
             const log = JSON.parse(event.data);
             const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
+            logEntry.classList.add("log-entry");
+            if (log.type === 'error') logEntry.classList.add("error");
             logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
             logEntries.appendChild(logEntry);
             if (logEntries.scrollHeight > logEntries.clientHeight) {
