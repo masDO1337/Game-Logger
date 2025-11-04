@@ -43,6 +43,14 @@ async function restoreSession(req, res, next) {
         return res.redirect("/login");
     }
 
+    let User = await global.client.users.fetch(userData.userId).catch(() => null);
+
+    if (!User) {
+        log.error("User not found in Discord, clearing cookie.");
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true });
+        return res.redirect("/login");
+    }
+
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
             log.error("Invalid refresh token, clearing cookie.");
@@ -55,14 +63,9 @@ async function restoreSession(req, res, next) {
 
     req.session.userId = userData.userId;
     req.session.role = userData.role || "user";
-
-    let user = await global.client.users.fetch(userData.userId).catch(() => null);
-
-    if (user) {
-        req.session.name = user.tag;
-        req.session.avatar = user.displayAvatarURL({ size: 64 });
-        log(`Website restored session for user: ${user.tag} (${userData.userId})`);
-    } else log(`Website restored session for user: (${userData.userId})`);
+    req.session.name = user.tag;
+    req.session.avatar = user.displayAvatarURL({ size: 64 });
+    log(`Website restored session for user: ${user.tag}`);
     next();
 }
 
