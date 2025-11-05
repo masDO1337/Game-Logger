@@ -73,10 +73,10 @@ router.post('/', async (req, res) => {
     req.session.userId = userId;
     req.session.name = user.tag;
     req.session.avatar = user.displayAvatarURL({ size: 64 });
-    req.session.role = userData.role || "user";
+    req.session.role = userData.role || "anonymous";
 
     userData.refreshToken = refreshToken;
-    if (!userData.role) userData.role = 'user';
+    if (!userData.role) userData.role = "anonymous";
 
     try {
         await userData.save();

@@ -8,8 +8,10 @@ async function refreshToken(req, res, next) {
         req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
         return res.redirect("/login");
     }
+
+    let userData = await UserModel.findOne({ refreshToken: refreshToken }).select(['userId', 'role']);
     
-    if (!await UserModel.findOne({ refreshToken: refreshToken }).select('userId')) {
+    if (!userData) {
         log.error(`Refresh token not found in database, logging out user: ${req.session.name}.`);
         req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
         res.clearCookie("refreshToken", { httpOnly: true, secure: true });
@@ -24,6 +26,7 @@ async function refreshToken(req, res, next) {
             return res.redirect("/login");
         } else {
             req.session.accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+            req.session.role = userData.role || "anonymous";
             next();
         }
     });
@@ -35,7 +38,7 @@ async function restoreSession(req, res, next) {
 
     if (!refreshToken) return res.redirect("/login");
 
-    let userData = await UserModel.findOne({ refreshToken: refreshToken }).select('userId');
+    let userData = await UserModel.findOne({ refreshToken: refreshToken }).select(['userId', 'role']);
     
     if (!userData) {
         log.error("Refresh token not found in database, clearing cookie.");
@@ -60,9 +63,8 @@ async function restoreSession(req, res, next) {
             req.session.accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
         }
     });
-
     req.session.userId = userData.userId;
-    req.session.role = userData.role || "user";
+    req.session.role = userData.role || "anonymous";
     req.session.name = User.tag;
     req.session.avatar = User.displayAvatarURL({ size: 64 });
     log(`Website restored session for user: ${User.tag}`);

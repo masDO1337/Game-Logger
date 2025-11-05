@@ -1,0 +1,49 @@
+<header>
+    <% if (back) {%>
+        <button type="button" class="btn center" style="height: 36px; padding: 0 6px;" onclick="history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 42 42" xml:space="preserve">
+                <polygon fill-rule="evenodd" points="31,38.32 13.391,21 31,3.68 28.279,1 8,21.01 28.279,41 " fill="#ffffff"/>
+            </svg>
+        </button>
+    <% } %>
+    <% if (home) {%>
+        <a type="button" class="btn center" style="height: 36px; padding: 0 6px;" href="/" alt="Home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 16 16" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0L0 6V8H1V15H4V10H7V15H15V8H16V6L14 4.5V1H11V2.25L8 0ZM9 10H12V13H9V10Z" fill="#ffffff"/>
+            </svg>
+        </a>
+    <% } %>
+    <div class="logo">
+        <img src="<%= session.avatar %>" alt="avatar">
+    </div>
+    <div class="text">
+        <h1>
+            <%= session.name || 'My Username' %>
+        </h1>
+        <p><span class="muted">ID: </span><%= session.userId %></p>
+        <% if (session.role === 'admin') {%>
+            <p class="role" style="background: #3f1818; color: #ff6b6b;"><%= session.role %></p>
+        <% } else if (session.role === 'user') {%>
+            <p class="role" style="background: #1d3f18; color: #70ff6b;"><%= session.role %></p>
+        <% } else {%>
+            <p class="role"><%= session.role %></p>
+        <% } %>
+    </div>
+    <% if (log && session.role === 'admin') {%>
+        <a type="button" class="btn center" style="height: 36px; padding: 0 6px;" href="/logs" alt="Logs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 16 16" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M5.314 1.256a.75.75 0 01-.07 1.058L3.889 3.5l1.355 1.186a.75.75 0 11-.988 1.128l-2-1.75a.75.75 0 010-1.128l2-1.75a.75.75 0 011.058.07zM7.186 1.256a.75.75 0 00.07 1.058L8.611 3.5 7.256 4.686a.75.75 0 10.988 1.128l2-1.75a.75.75 0 000-1.128l-2-1.75a.75.75 0 00-1.058.07zM2.75 7.5a.75.75 0 000 1.5h10.5a.75.75 0 000-1.5H2.75zM2 11.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zM2.75 13.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" fill="#ffffff"/>
+            </svg>
+        </a>
+    <% } %>
+    <a type="button" class="btn center" style="height: 36px; padding: 0 6px;" href="/logout" alt="Logout">
+        <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M2 6.5C2 4.01472 4.01472 2 6.5 2H12C14.2091 2 16 3.79086 16 6V7C16 7.55228 15.5523 8 15 8C14.4477 8 14 7.55228 14 7V6C14 4.89543 13.1046 4 12 4H6.5C5.11929 4 4 5.11929 4 6.5V17.5C4 18.8807 5.11929 20 6.5 20H12C13.1046 20 14 19.1046 14 18V17C14 16.4477 14.4477 16 15 16C15.5523 16 16 16.4477 16 17V18C16 20.2091 14.2091 22 12 22H6.5C4.01472 22 2 19.9853 2 17.5V6.5ZM18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289L22.7071 11.2929C23.0976 11.6834 23.0976 12.3166 22.7071 12.7071L19.7071 15.7071C19.3166 16.0976 18.6834 16.0976 18.2929 15.7071C17.9024 15.3166 17.9024 14.6834 18.2929 14.2929L19.5858 13L11 13C10.4477 13 10 12.5523 10 12C10 11.4477 10.4477 11 11 11L19.5858 11L18.2929 9.70711C17.9024 9.31658 17.9024 8.68342 18.2929 8.29289Z" fill="#ffffff"/>
+        </svg>
+    </a>
+</header>
+<% if (session.role === 'anonymous') { %>
+    <div style="margin-bottom: 16px; padding: 12px 16px; background: #3f1818; color: #ff6b6b; border-radius: 6px;">
+    Warning: Password is not set. Please <a href="/password" style="color: #ff6b6b; text-decoration: underline;">set a password</a> to secure your account.
+    </div>
+<% } %>

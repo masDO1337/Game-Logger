@@ -23,16 +23,7 @@
 </head>
 <body>
     <div class="card" role="main">
-        <header>
-            <button type="button" class="btn" onclick="history.back()"><span aria-hidden="true"><</span>Back</button>
-            <a type="button" class="btn" href="/">Home</a>
-            <div class="logo"><img src="<%= session.avatar %>" alt="avatar"></div>
-            <div class="center">
-                <h1><%= session.name || 'My Username' %></h1>
-                <p style="margin: 0; font-size: 13px;"><span class="muted">ID: </span><%= session.userId %></p>
-            </div>
-            <a type="button" class="btn" href="/logout">Logout</a>
-        </header>
+        <%- include('Layouts/header', { back: true, home: true, log: true, session }) -%>
 
         <div class="grid">
             <section class="panel">

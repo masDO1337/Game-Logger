@@ -56,7 +56,10 @@ router.post('/', async (req, res) => {
         });
 
         userData.password = hash;
-
+        if (userData.role !== 'admin') {
+            userData.role = 'user';
+            req.session.role = 'user';
+        }
         try {
             await userData.save();
         } catch (err) {

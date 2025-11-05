@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title><%= title || 'Discord Bot' %></title>
+    <link rel="stylesheet" href="/Style/global.css" />
+    <style>
+        .card { max-width:900px; }
+        .log-entries {
+            display: block;
+            padding: 16px;
+            overflow: auto;
+            border-radius: 6px;
+            background: #0b1220;
+            min-height: 55vh;
+            max-height: 55vh;
+        }
+        .log-entries::-webkit-scrollbar { width: 8px; }
+        .log-entries::-webkit-scrollbar-thumb { background: #2b4579; border-radius: 8px; }
+        .log-entry {
+            display: flex;
+            font-size: 13px;
+            padding: 0;
+            margin: 0;
+            margin: 3px 0;
+        }
+        .log-entry span {
+            white-space: nowrap;
+        }
+        .muted {
+            margin-right: 5px;
+        }
+        .error {
+            color: var(--danger);
+        }
+        @media (max-width: 768px) {
+            .log-entry {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <%- include('Layouts/header', { back: true, home: true, log: false, session }) -%>
+
+        <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions">
+            <% logs.forEach(log => { %>
+                <div class="log-entry">
+                    <span class="muted">[ <%= new Date(log.timestamp).toLocaleString('lt-LT') %> ]</span>
+                    <%= log.message %>
+                </div>
+            <% }); %>
+        </div>
+        
+        <footer>
+            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+        </footer>
+    </div>
+    <script>
+        const logEntries = document.getElementById('log-entries');
+
+        const evtSource = new EventSource('/events/logs');
+        evtSource.onmessage = function(event) {
+            const log = JSON.parse(event.data);
+            const logEntry = document.createElement('div');
+            logEntry.classList.add("log-entry");
+            if (log.type === 'error') logEntry.classList.add("error");
+            logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
+            logEntries.appendChild(logEntry);
+            if (logEntries.scrollHeight > logEntries.clientHeight) {
+                logEntries.style.scrollBehavior = 'smooth';
+            }
+            logEntries.scrollTop = logEntries.scrollHeight;
+        };
+        logEntries.scrollTop = logEntries.scrollHeight;
+    </script>
+</body>
+</html>

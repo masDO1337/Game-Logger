@@ -50,6 +50,26 @@ header {
     margin-bottom: 16px;
 }
 
+header .text {
+    display: block;
+    width: 100%;
+}
+
+header div p {
+    margin: 3px 0 0 0;
+    font-size: 12px;
+}
+
+header div p.role {
+    background: #3a3a3a;
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
 .logo, 
 .logo-32, 
 .logo-128 {
@@ -162,6 +182,11 @@ h1 {
 
 .btn:hover {
     background: var(--accent-dark);
+}
+
+.btn svg {
+    width: 24px;
+    height: 24px;
 }
 
 .input-group {

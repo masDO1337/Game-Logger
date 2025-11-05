@@ -19,19 +19,15 @@ function eventHead(res, interval) {
     res.write('retry: 2000\n');
 
     //clear interval when the client stops listening
-    res.on('close', function() {
-        clearInterval(interval);
-        //console.log('Client stopped listening');
-    });
+    res.on('close', () => clearInterval(interval));
 };
 
-router.get('/logs', (req, res) => {
+router.get('/logs', (req, res, next) => {
+    if (req.session.role !== "admin") return next();
 
     let oldLog = [];
 
-    if (global.logs && global.logs.length > 0) {
-      oldLog = [...global.logs];
-    }
+    if (global.logs && global.logs.length > 0) oldLog = [...global.logs];
 
     eventHead(res, setInterval(() => {
         if (global.logs && global.logs.length > 0) {
