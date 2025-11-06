@@ -11,7 +11,10 @@ const game = new mongoose.Schema({
     applicationId: { type: String, required: false },
     start: { type: Date, required: true },
     stop: { type: Date, required: true },
-    createdAt: { type: Date, required: true }
+    createdAt: { type: Date, required: true },
+    h: { type: Number, required: true, default: 0 },
+    m: { type: Number, required: true, default: 0 },
+    s: { type: Number, required: true, default: 0 }
 });
 
 const userSchema = new mongoose.Schema({

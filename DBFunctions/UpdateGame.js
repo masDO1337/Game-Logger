@@ -20,9 +20,7 @@ async function getApplication(id) {
     return await resapp.json();
 }
 
-async function updateGame(userId, game, ifNameOnly = false) {
-
-    let gameData = null;
+async function updateGame(userId, game, findByName = false) {
 
     if (!game.applicationId) {
         log.error("No application ID", game);
@@ -30,11 +28,13 @@ async function updateGame(userId, game, ifNameOnly = false) {
     }
 
     if (game.applicationId === "438122941302046720") {
-        log(`Game ID: ${game.applicationId} is Xbox, Set find DB by name ${game.name}`);
-        ifNameOnly = true;
+        log.warning(`Application ID is Xbox, Set find by name ${game.name}`);
+        findByName = true;
     }
 
-    if (ifNameOnly) {
+    let gameData = null;
+
+    if (findByName) {
         gameData = await GameModel.findOne({ name: game.name });
     } else {
         gameData = await GameModel.findOne({ id: game.applicationId });
@@ -44,7 +44,15 @@ async function updateGame(userId, game, ifNameOnly = false) {
         let body = {
             id: game.applicationId,
             name: game.name,
-            users: [{ userId, start: game.start, stop: game.stop, createdAt: game.createdAt}],
+            users: [{ 
+                userId, 
+                start: game.start, 
+                stop: game.stop, 
+                createdAt: game.createdAt, 
+                h: game.h, 
+                m: game.m, 
+                s: game.s 
+            }]
         };
 
         const app = await getApplication(game.applicationId);
@@ -65,20 +73,32 @@ async function updateGame(userId, game, ifNameOnly = false) {
         } else {
             log.error(`Failed to create database entry for game ${game.name}`);
         }
+
     } else {
 
         if (game.name !== gameData.name) {
-            log(`DB Game: ${gameData.name} no macth ${game.name}`);
+            log.warning(`DB Game: ${gameData.name} no macth, Set find by name ${game.name}`);
             return await updateGame(userId, game, true);
         }
 
         const index = gameData.users.findIndex(a => a.userId === userId);
 
         if (index === -1) {
-            gameData.users.push({userId, start: game.start, stop: game.stop, createdAt: game.createdAt});
+            gameData.users.push({ 
+                userId, 
+                start: game.start, 
+                stop: game.stop, 
+                createdAt: game.createdAt, 
+                h: game.h, 
+                m: game.m, 
+                s: game.s 
+            });
         } else {
             gameData.users[index].start = game.start;
             gameData.users[index].stop = game.stop;
+            gameData.users[index].h = game.h;
+            gameData.users[index].m = game.m;
+            gameData.users[index].s = game.s;
         }
 
         try {

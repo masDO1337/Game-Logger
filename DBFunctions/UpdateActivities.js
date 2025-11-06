@@ -47,17 +47,34 @@ async function updateActivities(presence) {
 
         if (updateHistory) {
             // Update history
+            const elapsedSec = Math.floor((new Date(updateHistoryEntry.stop).getTime() - new Date(updateHistoryEntry.start).getTime()) / 1000);
+            let h = Math.floor(elapsedSec / 3600);
+            let m = Math.floor((elapsedSec % 3600) / 60);
+            let s = elapsedSec % 60;
 
             const index = userData.history.findIndex(a => a.name === updateHistoryEntry.name);
 
             if (index === -1) {
                 updateHistoryEntry.createdAt = updateHistoryEntry.start;
-                userData.history.push(updateHistoryEntry);
+                userData.history.push({...updateHistoryEntry, h, m, s});
             } else {
                 userData.history[index].start = updateHistoryEntry.start;
                 userData.history[index].stop = updateHistoryEntry.stop;
                 updateHistoryEntry.createdAt = userData.history[index].createdAt;
+                userData.history[index].s += s;
+                if (s > 60) { 
+                    userData.history[index].m += m + 1; 
+                    userData.history[index].s %= 60; 
+                } else userData.history[index].m += m;
+                if (m > 60) { 
+                    userData.history[index].h += h + 1; 
+                    userData.history[index].m %= 60; 
+                } else userData.history[index].h += h;
             }
+
+            updateHistoryEntry.h = userData.history[index].h;
+            updateHistoryEntry.m = userData.history[index].m;
+            updateHistoryEntry.s = userData.history[index].s;
 
             await updateGame(userData.userId, updateHistoryEntry);
         }
