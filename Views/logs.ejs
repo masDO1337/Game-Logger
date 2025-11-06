@@ -34,6 +34,9 @@
         .error {
             color: var(--danger);
         }
+        .warning {
+            color: var(--warning);
+        }
         @media (max-width: 768px) {
             .log-entry {
                 flex-wrap: wrap;
@@ -61,6 +64,7 @@
                 const logEntry = document.createElement('div');
                 logEntry.classList.add("log-entry");
                 if (log.type === 'error') logEntry.classList.add("error");
+                if (log.type === 'warning') logEntry.classList.add("warning");
                 logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
                 logEntries.appendChild(logEntry); 
             });
