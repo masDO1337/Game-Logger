@@ -5,7 +5,7 @@ function log(message, type = 'log') {
     global.logs.push({ timestamp: timestamp.toISOString(), message, type });
 
     if (type === 'error') console.log(`[${timestamp.toLocaleString("lt-LT")}] \x1b[31m${message}\x1b[0m`);
-    if (type === 'warning') console.log(`[${timestamp.toLocaleString("lt-LT")}] \x1b[33m${message}\x1b[0m`);
+    else if (type === 'warning') console.log(`[${timestamp.toLocaleString("lt-LT")}] \x1b[33m${message}\x1b[0m`);
     else console.log(`[${timestamp.toLocaleString("lt-LT")}] ${message}`);
 
     // Keep only the latest 100 logs
