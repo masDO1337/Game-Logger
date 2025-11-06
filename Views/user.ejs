@@ -216,15 +216,12 @@
                                         </div>
                                         <div>
                                             <span class="muted">Total Play:</span>
-                                            <% 
-                                            const fullSec = Math.floor((new Date(activity.stop).getTime() - new Date(activity.createdAt).getTime()) / 1000);
-                                            %>
                                             <%= 
-                                            String(Math.floor(fullSec / 3600)).padStart(2, '0') + 
+                                            String(activity.h).padStart(2, '0') + 
                                             ":" + 
-                                            String(Math.floor((fullSec % 3600) / 60)).padStart(2, '0') + 
+                                            String(activity.m).padStart(2, '0') + 
                                             ":" + 
-                                            String(fullSec % 60).padStart(2, '0')
+                                            String(activity.s).padStart(2, '0')
                                             %>
                                         </div>
                                     </div>

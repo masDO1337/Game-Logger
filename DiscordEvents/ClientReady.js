@@ -1,7 +1,6 @@
 const { Events } = require('discord.js');
 const UserModel = require('../DBModels/User');
 const updateActivities = require('../DBFunctions/UpdateActivities');
-const fixGameDB = require('../DBFunctions/FixGameDB');
 const log = require("../Logger");
 
 module.exports = {
@@ -29,8 +28,5 @@ module.exports = {
 				}
 			}
 		});
-
-		if (true) return;
-		await fixGameDB();
 	}
 };
