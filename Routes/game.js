@@ -33,13 +33,11 @@ router.get("/:id", async (req, res) => {
     await game.users.forEach(async user => {
         const u = await global.client.users.fetch(user.userId);
         Users.push({
+            ...user._doc,
             id: u.id,
             tag: u.tag,
             username: u.globalName == null ? u.username : u.globalName,
             avatar: u.displayAvatarURL({ format: "png", size: 64 }),
-            start: user.start,
-            stop: user.stop,
-            createdAt: user.createdAt
         });
     });
 

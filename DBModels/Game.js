@@ -8,7 +8,7 @@ const user = new mongoose.Schema({
     h: { type: Number, required: true, default: 0 },
     m: { type: Number, required: true, default: 0 },
     s: { type: Number, required: true, default: 0 }
-})
+}, { _id: false })
 
 const userSchema = new mongoose.Schema({
     id: { type: String, required: true },

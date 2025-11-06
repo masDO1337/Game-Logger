@@ -31,43 +31,7 @@
         }
         .roles { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; justify-content: center; }
         .role { padding:6px 8px; border-radius:6px; font-size:13px; background:#0b1220; }
-        .activities-list {
-            display:grid;
-            gap:8px;
-            margin-top:8px;
-            max-height: 55vh;
-            overflow: auto;
-            padding-right: 8px;
-        }
-        .activities-list::-webkit-scrollbar { width: 8px; }
-        .activities-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
-        .activitie-pill {
-            display: grid;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 8px;
-            background: #0b1220;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            transition:all 0.2s;
-        }
-        .activitie-pill:first-child {
-            text-overflow: clip;
-        }
-        .activitie-pill:hover { background:var(--accent); color:white; transform:translateY(-1px); }
-        .activity-elapsed, .activity-time {
-            color: var(--time);
-            margin: 0 auto;
-            font-family: monospace;
-            text-align: left;
-            transition:all 0.2s;
-        }
-        .activitie-pill:hover .activity-time {
-            color: white;
-        }
-        @media (max-width:800px) {.stat-grid { flex-direction: column; gap: 0;} .activitie-pill {flex-direction: column;} .activitie-pill {padding: 0;}}
+        @media (max-width:800px) {.stat-grid { flex-direction: column; gap: 0;}}
     </style>
 </head>
 <body>
@@ -196,10 +160,10 @@
                 <div>
                     <h4 style="margin: 16px 0 8px 0;">History Activities</h4>
                     <% if (history && history.length > 0) { %>
-                        <div class="activities-list">
+                        <div class="list">
                             <% history.forEach(function(activity) { %>
-                                <a class="activitie-pill" href="/game/<%=(activity.gameDB || "") %>">
-                                    <div><%= activity.name %></div>
+                                <a href="/game/<%=(activity.gameDB || "") %>">
+                                    <div class="center" style="align-items: start;"><%= activity.name %></div>
                                     <div class="activity-time">
                                         <div>
                                             <span class="muted">Play:</span>

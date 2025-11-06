@@ -62,11 +62,11 @@ async function updateActivities(presence) {
                 userData.history[index].stop = updateHistoryEntry.stop;
                 updateHistoryEntry.createdAt = userData.history[index].createdAt;
                 userData.history[index].s += s;
-                if (s > 60) { 
+                if (userData.history[index].s >= 60) { 
                     userData.history[index].m += m + 1; 
                     userData.history[index].s %= 60; 
                 } else userData.history[index].m += m;
-                if (m > 60) { 
+                if (userData.history[index].m >= 60) { 
                     userData.history[index].h += h + 1; 
                     userData.history[index].m %= 60; 
                 } else userData.history[index].h += h;

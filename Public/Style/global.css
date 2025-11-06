@@ -133,7 +133,6 @@ h1 {
     font-size: 13px;
     margin: 0;
     padding: 0;
-    text-overflow: ellipsis;
     transition: all 0.2s;
 }
 
@@ -204,9 +203,8 @@ h1 {
 
 .activity-time {
     color: var(--time);
-    margin-right: 20px;
     font-family: monospace;
-    text-align: left;
+    text-align: end;
     transition: all 0.2s;
 }
 
