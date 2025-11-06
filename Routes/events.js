@@ -27,14 +27,12 @@ router.get('/logs', (req, res, next) => {
 
     let oldLog = [];
 
-    if (global.logs && global.logs.length > 0) oldLog = [...global.logs];
-
     eventHead(res, setInterval(() => {
         if (global.logs && global.logs.length > 0) {
             let newLogs = global.logs.filter((item) => !oldLog.includes(item));
             if (newLogs.length > 0) {
                 oldLog = [...global.logs];
-                newLogs.forEach(log => res.write(`data: ${JSON.stringify(log)}\n\n`));
+                res.write(`data: ${JSON.stringify(newLogs)}\n\n`);
             }
         }
     }, 1000));

@@ -6,7 +6,7 @@
     <title><%= title || 'Discord Bot' %></title>
     <link rel="stylesheet" href="/Style/global.css" />
     <style>
-        .stat-grid { display:flex; gap:12px; margin-top:12px; flex-direction: column; }
+        .stat-grid { display:flex; gap:12px; flex-direction: column; }
         .stat { flex:1; display: flex; background:#0b1220; padding:16px; border-radius:6px; text-align:center; }
         .stat-grid a{ background:#0b1220; color: var(--muted); text-decoration:none; display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; transition:all 0.2s; }
         .stat-grid a:hover{ background:var(--accent); color:white; transform:translateY(-1px); }
@@ -16,29 +16,26 @@
     </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { log: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: false, home: false, log: true, session }) -%>
-        <div class="grid">
-            <section class="panel">
-                <div class="stat-grid">
-                    <div class="stat">
-                        <div>Information Collection Started: </div>
-                        <div style="color: var(--time); margin-left: auto;"><%= new Date('2025-10-29T05:10:32.475Z').toLocaleDateString('lt-LT') %></div>
-                    </div>
-                    <a href="/guild">
-                        <div class="logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEb0lEQVR4nO2ZW2hdRRSGvygx0V4i3lERrSJVEC00xYB4CeZRa+PlyUdB6u1NtNoWmj74IF4olIJgKQREEG8pUpCKUpF6q/UlTbWib2KOtUltTY6Yeso6/FvGOXv23ufs2T2l9IeBffasNWvWmln/rD0HzuLMQB/wNPAlcFxtL/AUcF4B/YuAMWASmAeOAB8DDwM9nCJcBXwPNALtO+DKDP2VwK8Z+h8A55+KlUicsGiuBpaoPQBMqW9fYGWuBmqS+QS4A+gHLgUec/rGq3bkGRk6AAyk9A84zjyZ0v+m+iaAc1P6bwRmJWNOVoavZMRWIoQ1krGccWEr9CfwL3Bthv4m6W+jQhyTEdtKISyVjE3axQ16/1OOjTslt4cKMVvAkQHJzHjvr2vTkU+pEHtlxBI7hFHJfOG973W2ljkVwpj0t1IhnpCRqUCyXwj8IJm1Kf1vqG9nINmXA0clM0SF6BW1mqGDSuylaqOOE99I1sflDsV+Btwl+rX3jwOH1bejSifcySQUm9amJBPCrcqfkP4unVeVwqL8GrCQMZF/gJcCk7kEeCtDt6E8StuWHeEyYDOw36mlrPT4Wsb+BrYAg8AFwCI9vwLMOYder+fEpPqmgeeVE/3Kt2HgbZFBUqrs8+yPqQoohIcUlayorc/Qvxn4RXKv612PcsLefS6nQtiSY/uo8jHXiSQi7ysZFyliI6pQk+2zOseZOcndBDwivZ/FbCGMOtv2I+BeYLHmcLdWyfpOiGiC2ylZiWcDMj1OCfF7zjK/KrmXgd16fjRD3gjiD8m9kCH3nGRmQyu72VmJPOwqYHCVZH4E6moW2RA2OGdMHiYka0FtQVKe23bKw4hkv82QWeLt7UM5Y1oyN5T0ebjH+fZpQbKtbE/m4eJAPZXAlnxjSpJuytiOSR2XlUN+kPzCtImZNhxJBrJPVB9r9D7EOrMB1ollv7lNGmKHPAw7pYjvxIkU1vNZZyHFmRj2m3jROYjysFOy6zzWmclhPZd1jnilTFn7qfRnxkJYJ5nDouxOWC9hnbGI9oNbY0LssFht2InEQsqB2A7rJayzP6L9FtyvWiqUrNZ3X6saf3WQrMcj2v8flumappHTdqd85cVgnWUl7P+HIWcy0yoMb3NYZ4VO35ozidsjsk5Z+01c7xxI7xS4JXnXORAtimVZJ4b9JvY4gxS5ez0HeE86Vp6XZZ0Y9hlxljMrEj4GVAG79VEnrBPN/o4CH0shJPXUdo916hmJWvdYJ5r9Q/phlwLtYoV07fbEcI1z2GW1DyUb1f6cfrSzrD6N2hlyi8MoRVinJp1Y9kmi1CkS/VoHrFOLaJ9YA3XKOqedI9MlWCeqI30dDNLn6JdhnRj2qTsR3a5bviFdnl2hC7R+PS9X31rJTjsDlWGdsvbnk7usAwUoM6+VYZ0ybRJ40B10UP8RjusvNuPm3+TtvJ4Pqm9csqsi7nEbq137NudoiJas3cYZ50hfWdbpNuqxWKfbKMt6LazTbQx2m3XOgtMIJwENnInz8GwFAgAAAABJRU5ErkJggg==" alt="groups"></div>
-                        <h3>Guilds</h3>
-                        <div class="muted">List of guilds and analytics in database.</div>
-                    </a>
-                    <a href="/game">
-                        <div class="logo"><img src="data:image/png;base64,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" alt="controller"></div>
-                        <h3>Games</h3>
-                        <div class="muted">List of gamas and analytics in database.</div>
-                    </a>
-                </div>
-            </section>
+        <div class="stat-grid">
+            <div class="stat">
+                <div>Information Collection Started: </div>
+                <div style="color: var(--time); margin-left: auto;"><%= new Date('2025-10-29T05:10:32.475Z').toLocaleDateString('lt-LT') %></div>
+            </div>
+            <a href="/guild">
+                <div class="logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEb0lEQVR4nO2ZW2hdRRSGvygx0V4i3lERrSJVEC00xYB4CeZRa+PlyUdB6u1NtNoWmj74IF4olIJgKQREEG8pUpCKUpF6q/UlTbWib2KOtUltTY6Yeso6/FvGOXv23ufs2T2l9IeBffasNWvWmln/rD0HzuLMQB/wNPAlcFxtL/AUcF4B/YuAMWASmAeOAB8DDwM9nCJcBXwPNALtO+DKDP2VwK8Z+h8A55+KlUicsGiuBpaoPQBMqW9fYGWuBmqS+QS4A+gHLgUec/rGq3bkGRk6AAyk9A84zjyZ0v+m+iaAc1P6bwRmJWNOVoavZMRWIoQ1krGccWEr9CfwL3Bthv4m6W+jQhyTEdtKISyVjE3axQ16/1OOjTslt4cKMVvAkQHJzHjvr2vTkU+pEHtlxBI7hFHJfOG973W2ljkVwpj0t1IhnpCRqUCyXwj8IJm1Kf1vqG9nINmXA0clM0SF6BW1mqGDSuylaqOOE99I1sflDsV+Btwl+rX3jwOH1bejSifcySQUm9amJBPCrcqfkP4unVeVwqL8GrCQMZF/gJcCk7kEeCtDt6E8StuWHeEyYDOw36mlrPT4Wsb+BrYAg8AFwCI9vwLMOYder+fEpPqmgeeVE/3Kt2HgbZFBUqrs8+yPqQoohIcUlayorc/Qvxn4RXKv612PcsLefS6nQtiSY/uo8jHXiSQi7ysZFyliI6pQk+2zOseZOcndBDwivZ/FbCGMOtv2I+BeYLHmcLdWyfpOiGiC2ylZiWcDMj1OCfF7zjK/KrmXgd16fjRD3gjiD8m9kCH3nGRmQyu72VmJPOwqYHCVZH4E6moW2RA2OGdMHiYka0FtQVKe23bKw4hkv82QWeLt7UM5Y1oyN5T0ebjH+fZpQbKtbE/m4eJAPZXAlnxjSpJuytiOSR2XlUN+kPzCtImZNhxJBrJPVB9r9D7EOrMB1ollv7lNGmKHPAw7pYjvxIkU1vNZZyHFmRj2m3jROYjysFOy6zzWmclhPZd1jnilTFn7qfRnxkJYJ5nDouxOWC9hnbGI9oNbY0LssFht2InEQsqB2A7rJayzP6L9FtyvWiqUrNZ3X6saf3WQrMcj2v8flumappHTdqd85cVgnWUl7P+HIWcy0yoMb3NYZ4VO35ozidsjsk5Z+01c7xxI7xS4JXnXORAtimVZJ4b9JvY4gxS5ez0HeE86Vp6XZZ0Y9hlxljMrEj4GVAG79VEnrBPN/o4CH0shJPXUdo916hmJWvdYJ5r9Q/phlwLtYoV07fbEcI1z2GW1DyUb1f6cfrSzrD6N2hlyi8MoRVinJp1Y9kmi1CkS/VoHrFOLaJ9YA3XKOqedI9MlWCeqI30dDNLn6JdhnRj2qTsR3a5bviFdnl2hC7R+PS9X31rJTjsDlWGdsvbnk7usAwUoM6+VYZ0ybRJ40B10UP8RjusvNuPm3+TtvJ4Pqm9csqsi7nEbq137NudoiJas3cYZ50hfWdbpNuqxWKfbKMt6LazTbQx2m3XOgtMIJwENnInz8GwFAgAAAABJRU5ErkJggg==" alt="groups"></div>
+                <h3>Guilds</h3>
+                <div class="muted">List of guilds and analytics in database.</div>
+            </a>
+            <a href="/game">
+                <div class="logo"><img src="data:image/png;base64,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" alt="controller"></div>
+                <h3>Games</h3>
+                <div class="muted">List of gamas and analytics in database.</div>
+            </a>
         </div>
-        
         <footer>
             <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
         </footer>

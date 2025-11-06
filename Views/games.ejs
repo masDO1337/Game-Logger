@@ -5,31 +5,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title><%= title || 'Discord Bot' %></title>
     <link rel="stylesheet" href="/Style/global.css" />
-    <style>
-        .games-list {
-            display:grid;
-            gap:8px;
-            margin-top:8px;
-            max-height: 55vh;
-            overflow: auto;
-            padding-right: 8px;
-        }
-        .games-list::-webkit-scrollbar { width: 8px; }
-        .games-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
-        .games-list a { background:#0b1220; color: var(--muted); text-decoration:none; display:flex; align-items:center; gap:16px; padding:4px 8px; border-radius:8px; transition:all 0.2s; }
-        .games-list a:hover { background:var(--accent); color:white; transform:translateY(-1px); }
-        @media (max-width:800px) { .games-list { padding: 0; } .games-list a { flex-direction: column; }}
-    </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { back: true, home: true, log: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: true, home: true, log: true, session }) -%>
-
         <div class="grid">
             <section class="panel">
                 <h2 style="margin: 0 0 8px 0">Games</h2>
                 <div class="muted" style="margin-bottom:16px">Below is a list of games available. Click a game to view details and analytics.</div>
-                <div class="games-list">
+                <div class="list">
                     <% if (games && games.length > 0) { %>
                         <% games.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)).forEach((game) => { %>
                             <a href="<%= '/game/' + game._id %>">

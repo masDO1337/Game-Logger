@@ -71,9 +71,10 @@
     </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { back: true, home: true, log: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: true, home: true, log: true, session }) -%>
-        
         <div class="grid">
             <section class="panel" aria-label="User profile">
                 <div class="profile">

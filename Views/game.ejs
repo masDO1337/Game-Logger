@@ -18,7 +18,6 @@
             margin-bottom: 16px;
             z-index: 1;
         }
-
         .background {
             position: absolute;
             top: 0;
@@ -34,42 +33,21 @@
             height: 100%;
             object-fit: cover;
         }
-        
-        .meta { 
-            color: var(--muted-text); 
+        .description {
             font-size: 13px; 
-            margin-bottom:8px; 
-        }
-        .stat-grid { display:flex; gap:12px; margin-top:12px; }
-        .stat { flex:1; background:#0b1220; padding:8px; border-radius:6px; text-align:center; }
-        .games-list {
-            display:grid;
-            gap:8px;
-            margin-top:8px;
-            max-height: 55vh;
-            overflow: auto;
-            padding-right: 8px;
-        }
-        .games-list::-webkit-scrollbar { width: 8px; }
-        .games-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
-        .games-list a { background:#0b1220; color: var(--muted); text-decoration:none; display:flex; align-items:center; gap:16px; padding:4px 8px; border-radius:8px; transition:all 0.2s; }
-        .games-list a:hover { background:var(--accent); color:white; transform:translateY(-1px); }
-        .activity-time {
-            color: var(--time);
-            margin-right: 20px;
-            font-family: monospace;
-            text-align: left;
-            transition:all 0.2s;
-        }
-        .games-list a:hover .activity-time {
-            color: white;
+            flex:1; 
+            background:#0b1220; 
+            padding:8px; 
+            border-radius:6px; 
+            text-align:center; 
         }
     </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { back: true, home: true, log: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: true, home: true, log: true, session }) -%>
-
         <div class="grid">
             <section class="panel">
                 <div class="profile">
@@ -87,7 +65,7 @@
                             No Image
                         </div>
                     <% } %>
-                    <div class="meta center">
+                    <div class="center">
                         <div><h1><%= game.name %></h1></div>
                         <div><span class="muted">ID: </span><%= game.id %></div>
                         <% if (game.id === '438122941302046720') { %>
@@ -96,16 +74,12 @@
                     </div>
                 </div>
                 <% if (game.description) { %>
-                    <div class="meta">
-                        <div class="stat-grid">
-                            <div class="stat">
-                                <div class="muted">Description</div>
-                                <div><%= game.description %></div>
-                            </div>
-                        </div>
+                    <div class="description">
+                        <div class="muted">Description</div>
+                        <div><%= game.description %></div>
                     </div>
                 <% } %>
-                <div class="games-list">
+                <div class="list">
                     <% if (users && users.length > 0) { %>
                         <% users
                             .sort((a, b) => 
@@ -177,7 +151,8 @@
                     var h = Math.floor(diff/3600); diff %= 3600;
                     var m = Math.floor(diff/60);
                     var s = diff % 60;
-                    el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+                    if (h > 48) el.textContent = `${Math.floor(h/24)} days ago`;
+                    else el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
                 });
             }
             updateTimers();

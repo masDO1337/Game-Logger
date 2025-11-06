@@ -8,7 +8,7 @@
     <style>
         .card { max-width:1200px; }
         .grid{
-            grid-template-columns: 1.5fr 1fr;
+            grid-template-columns: 1fr 0.5fr;
             align-items: start;
         }
 
@@ -26,17 +26,7 @@
         .meta { color: var(--muted-text); font-size: 13px; margin-bottom:8px; }
         .stat-grid { display:flex; gap:12px; margin-top:12px; }
         .stat { flex:1; background:#0b1220; padding:8px; border-radius:6px; text-align:center; }
-        .members-list {
-            display:grid;
-            gap:8px;
-            margin-top:8px;
-            max-height: 55vh;
-            overflow: auto;
-            padding-right: 8px;
-        }
-        .members-list::-webkit-scrollbar { width: 8px; }
-        .members-list::-webkit-scrollbar-thumb { background:#0b1220; border-radius: 8px; }
-        .member-pill, .channel {
+        .channel {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -47,20 +37,15 @@
             border-radius: 8px;
             font-size: 14px;
         }
-        .member-pill:hover { 
-            background:var(--accent); 
-            color:white; 
-            transform:translateY(-1px); 
-            cursor: pointer;
-        }
         .roles, .channels { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
         .role { padding:6px 8px; border-radius:6px; font-size:13px; background:#0b1220; }
     </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { back: true, home: true, log: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: true, home: true, log: true, session }) -%>
-
         <div class="grid">
             <section class="panel" aria-label="Guild profile">
                 <div class="profile">
@@ -138,19 +123,17 @@
             <section class="panel" aria-label="Guild members">
                 <h2 style="margin:0 0 8px 0">Members</h2>
                 <div class="muted" style="margin-bottom:16px">A list of guild members:</div>
-                <div class="members-list">
+                <div class="list">
                     <% if (guild.members && guild.members.cache) { %>
-                        <% Array.from(guild.members.cache.values()).forEach(function(member){ %>
-                            <a href="/user/<%= guild.id +'/'+ member.user.id %>" class="member-pill" title="<%= member.user.username %>">
+                        <% for (const [userId, member] of guild.members.cache){ %>
+                            <a href="/user/<%= guild.id +'/'+ userId %>" class="member-pill" title="<%= member.user.username %>">
                                 <div class="logo-32">
                                     <img src="<%= member.user.displayAvatarURL({ size: 32 }) %>" alt="Member avatar">
                                 </div>
-                                <div>
-                                    <%= member.user.globalName == null ? member.user.username : member.user.globalName %>
-                                    <span class="muted" style="margin-left: 6px;"><%= member.user.tag %></span>
-                                </div>
+                                <div class="center" style="align-items:start;"><%= member.user.globalName == null ? member.user.username : member.user.globalName %></div>
+                                <div><span class="muted"><%= member.user.tag %></span></div>
                             </a>
-                        <% }) %>
+                        <% } %>
                     <% } else { %>
                         <div class="muted">No members available</div>
                     <% } %>

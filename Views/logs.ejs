@@ -12,7 +12,7 @@
             padding: 16px;
             overflow: auto;
             border-radius: 6px;
-            background: #0b1220;
+            background: #070b13;
             min-height: 55vh;
             max-height: 55vh;
         }
@@ -42,18 +42,11 @@
     </style>
 </head>
 <body>
+    <div class="card" style="margin-bottom: 36px;" role="header">
+        <%- include('Layouts/header', { button: { back: true, home: true, logout: true }, session }) -%>
+    </div>
     <div class="card" role="main">
-        <%- include('Layouts/header', { back: true, home: true, log: false, session }) -%>
-
-        <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions">
-            <% logs.forEach(log => { %>
-                <div class="log-entry">
-                    <span class="muted">[ <%= new Date(log.timestamp).toLocaleString('lt-LT') %> ]</span>
-                    <%= log.message %>
-                </div>
-            <% }); %>
-        </div>
-        
+       <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions"></div>
         <footer>
             <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
         </footer>
@@ -63,12 +56,14 @@
 
         const evtSource = new EventSource('/events/logs');
         evtSource.onmessage = function(event) {
-            const log = JSON.parse(event.data);
-            const logEntry = document.createElement('div');
-            logEntry.classList.add("log-entry");
-            if (log.type === 'error') logEntry.classList.add("error");
-            logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
-            logEntries.appendChild(logEntry);
+            const logs = JSON.parse(event.data);
+            logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.classList.add("log-entry");
+                if (log.type === 'error') logEntry.classList.add("error");
+                logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
+                logEntries.appendChild(logEntry); 
+            });
             if (logEntries.scrollHeight > logEntries.clientHeight) {
                 logEntries.style.scrollBehavior = 'smooth';
             }
