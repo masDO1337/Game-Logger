@@ -9,8 +9,8 @@ module.exports = {
 	once: true,
 	async execute(client) {
 		// get all members from each guild and ensure they are in the database and update their activitys
-		client.guilds.cache.forEach(async (guild) => {
-			const members = await guild.members.fetch({ withPresences: true });
+		await client.guilds.cache.forEach(async (guild) => {
+			const members = await guild.members.fetch();
 
 			for (const [memberId, member] of members) {
 				if (member.user.bot) continue; // skip bots

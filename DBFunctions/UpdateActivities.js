@@ -39,7 +39,7 @@ async function updateActivities(presence) {
 
         userData.activities.forEach(activity => {
             if (!activities.find(a => a.name === activity.name)) {
-                updateHistoryEntry = { ...activity, stop: new Date()}
+                updateHistoryEntry = { ...activity._doc, stop: new Date()}
                 updateHistory = true;
                 log(`User ${presence.user.tag} stopped game: ${activity.name}`);
             }
