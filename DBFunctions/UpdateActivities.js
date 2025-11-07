@@ -64,17 +64,13 @@ async function updateActivities(presence) {
             } else {
                 userData.history[index].start = updateHistoryEntry.start;
                 userData.history[index].stop = updateHistoryEntry.stop;
-                updateHistoryEntry.createdAt = userData.history[index].createdAt;
                 userData.history[index].s += s;
-                if (userData.history[index].s >= 60) { 
-                    userData.history[index].m += m + 1; 
-                    userData.history[index].s %= 60; 
-                } else userData.history[index].m += m;
-                if (userData.history[index].m >= 60) { 
-                    userData.history[index].h += h + 1; 
-                    userData.history[index].m %= 60; 
-                } else userData.history[index].h += h;
+                userData.history[index].m += m + Math.floor(userData.history[index].s / 60); 
+                userData.history[index].s %= 60; 
+                userData.history[index].h += h + Math.floor(userData.history[index].m / 60);
+                userData.history[index].m %= 60;
 
+                updateHistoryEntry.createdAt = userData.history[index].createdAt;
                 updateHistoryEntry.h = userData.history[index].h;
                 updateHistoryEntry.m = userData.history[index].m;
                 updateHistoryEntry.s = userData.history[index].s;
