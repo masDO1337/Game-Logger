@@ -56,7 +56,11 @@ async function updateActivities(presence) {
 
             if (index === -1) {
                 updateHistoryEntry.createdAt = updateHistoryEntry.start;
-                userData.history.push({...updateHistoryEntry, h, m, s});
+                updateHistoryEntry.h = h;
+                updateHistoryEntry.m = m;
+                updateHistoryEntry.s = s;
+
+                userData.history.push({...updateHistoryEntry});
             } else {
                 userData.history[index].start = updateHistoryEntry.start;
                 userData.history[index].stop = updateHistoryEntry.stop;
@@ -70,11 +74,11 @@ async function updateActivities(presence) {
                     userData.history[index].h += h + 1; 
                     userData.history[index].m %= 60; 
                 } else userData.history[index].h += h;
-            }
 
-            updateHistoryEntry.h = userData.history[index].h;
-            updateHistoryEntry.m = userData.history[index].m;
-            updateHistoryEntry.s = userData.history[index].s;
+                updateHistoryEntry.h = userData.history[index].h;
+                updateHistoryEntry.m = userData.history[index].m;
+                updateHistoryEntry.s = userData.history[index].s;
+            }
 
             await updateGame(userData.userId, updateHistoryEntry);
         }
