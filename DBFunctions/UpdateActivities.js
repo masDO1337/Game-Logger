@@ -70,7 +70,7 @@ async function updateActivities(presence) {
                 userData.history[index].h += h + Math.floor(userData.history[index].m / 60);
                 userData.history[index].m %= 60;
 
-                updateHistoryEntry.createdAt = userData.history[index].createdAt;
+                updateHistoryEntry.createdAt = new Date();
                 updateHistoryEntry.h = userData.history[index].h;
                 updateHistoryEntry.m = userData.history[index].m;
                 updateHistoryEntry.s = userData.history[index].s;
