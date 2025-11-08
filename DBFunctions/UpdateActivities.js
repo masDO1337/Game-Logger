@@ -58,6 +58,9 @@ async function updateActivities(presence) {
                 updateHistoryEntry.m = m;
                 updateHistoryEntry.s = s;
 
+                const gameID = await updateGame(userData.userId, updateHistoryEntry);
+                if (gameID) updateHistoryEntry.gameDB = gameID;
+
                 userData.history.push({...updateHistoryEntry});
 
             } else {
@@ -74,10 +77,10 @@ async function updateActivities(presence) {
                 updateHistoryEntry.h = userData.history[index].h;
                 updateHistoryEntry.m = userData.history[index].m;
                 updateHistoryEntry.s = userData.history[index].s;
-            }
 
-            const gameID = await updateGame(userData.userId, updateHistoryEntry);
-            if (!userData.history[index].gameDB && gameID) userData.history[index].gameDB = gameID;
+                const gameID = await updateGame(userData.userId, updateHistoryEntry);
+                if (!userData.history[index].gameDB && gameID) userData.history[index].gameDB = gameID;
+            }
         }
 
         userData.activities = activities;
