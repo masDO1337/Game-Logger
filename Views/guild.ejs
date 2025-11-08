@@ -39,6 +39,9 @@
         }
         .roles, .channels { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
         .role { padding:6px 8px; border-radius:6px; font-size:13px; background:#0b1220; }
+        .list a:hover .muted {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -122,16 +125,26 @@
             </section>
             <section class="panel" aria-label="Guild members">
                 <h2 style="margin:0 0 8px 0">Members</h2>
-                <div class="muted" style="margin-bottom:16px">A list of guild members:</div>
+                <div class="muted" style="margin-bottom:16px">A list of guild members played:</div>
                 <div class="list">
                     <% if (guild.members && guild.members.cache) { %>
                         <% for (const [userId, member] of guild.members.cache){ %>
-                            <a href="/user/<%= guild.id +'/'+ userId %>" class="member-pill" title="<%= member.user.username %>">
+                            <a href="/user/<%= guild.id +'/'+ userId %>" title="<%= member.user.username %>">
                                 <div class="logo-32">
                                     <img src="<%= member.user.displayAvatarURL({ size: 32 }) %>" alt="Member avatar">
                                 </div>
-                                <div class="center" style="align-items:start;"><%= member.user.globalName == null ? member.user.username : member.user.globalName %></div>
-                                <div><span class="muted"><%= member.user.tag %></span></div>
+                                <div class="center" style="align-items:start; color: #fff;">
+                                    <%= member.user.globalName == null ? member.user.username : member.user.globalName %>
+                                    <span class="muted"><%= member.user.tag %></span>
+                                </div>
+                                <% if (playedUsers.includes(userId)) { %>
+                                    <div class="logo-32" style="background: none;">
+                                        <svg width="32px" height="32px" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M723.2 704c-25.6 0-51.2-12.8-70.4-32L582.4 582.4H435.2l-38.4 64c-19.2 32-51.2 57.6-89.6 57.6-57.6 0-102.4-44.8-102.4-102.4v-12.8V576l25.6-166.4c6.4-70.4 57.6-121.6 128-121.6 32 0 70.4 12.8 89.6 38.4 25.6 0 89.6-6.4 128 0 25.6-25.6 57.6-32 89.6-32 51.2 0 96 32 115.2 83.2v12.8l38.4 179.2c0 6.4 6.4 19.2 6.4 32 0 51.2-44.8 102.4-102.4 102.4z" fill="#8880FE" />
+                                            <path d="M716.8 460.8c-12.8 0-19.2-12.8-19.2-19.2s6.4-19.2 19.2-19.2c12.8 0 19.2 12.8 19.2 19.2s-6.4 19.2-19.2 19.2z m-108.8 0c-12.8 0-19.2-12.8-19.2-19.2s6.4-19.2 19.2-19.2c12.8 0 19.2 12.8 19.2 19.2s-6.4 19.2-19.2 19.2z m51.2 57.6c-6.4 0-19.2-6.4-19.2-19.2s6.4-19.2 19.2-19.2 19.2 12.8 19.2 19.2-6.4 19.2-19.2 19.2z m0-115.2c-6.4 0-19.2-6.4-19.2-19.2s6.4-19.2 19.2-19.2 19.2 12.8 19.2 19.2-6.4 19.2-19.2 19.2zM345.6 416h-51.2V448h51.2v51.2h32V448h51.2v-32h-51.2v-51.2h-32z" fill="#FFFFFF" />
+                                        </svg>
+                                    </div>
+                                <% } %>
                             </a>
                         <% } %>
                     <% } else { %>

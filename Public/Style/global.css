@@ -198,7 +198,7 @@ h1 {
 }
 
 .list a:hover .muted {
-    opacity: 0;
+    color: white;
 }
 
 .activity-time {

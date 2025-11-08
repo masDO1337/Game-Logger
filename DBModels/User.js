@@ -35,3 +35,8 @@ module.exports.getUserHistory = async (userId) => {
     const userData = await User.findOne({ userId: userId });
     return userData ? userData.history : [];
 };
+
+module.exports.getIDOfUsersPlayed = async () => {
+    const userData = await User.find({"history": {"$exists": true, "$not": {"$size": 0}}}).select('userId');
+    return userData ? userData.reduce((a, user) => {a.push(user.userId); return a}, []) : [];
+};

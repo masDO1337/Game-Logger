@@ -82,9 +82,7 @@
                 <div class="list">
                     <% if (users && users.length > 0) { %>
                         <% users
-                            .sort((a, b) => 
-                            Math.floor((new Date(b.stop).getTime() - new Date(b.createdAt).getTime()) / 1000) - 
-                            Math.floor((new Date(a.stop).getTime() - new Date(a.createdAt).getTime()) / 1000) )
+                            .sort((a, b) => ((b.h*3600)+(b.m*60)+b.s) - ((a.h*3600)+(a.m*60)+a.s))
                             .forEach((user, index) => { 
                         %>
                             <a href="/user/<%= user.id %>">
@@ -99,7 +97,7 @@
                                 </div>
                                 <div class="activity-time">
                                     <div>
-                                        <span class="muted">Play:</span>
+                                        <span class="muted">Last Played:</span>
                                         <% 
                                             const elapsedSec = Math.floor((new Date(user.stop).getTime() - new Date(user.start).getTime()) / 1000);
                                         %>
@@ -112,7 +110,7 @@
                                         %>
                                     </div>
                                     <div>
-                                        <span class="muted">Total Play:</span>
+                                        <span class="muted">Total Played:</span>
                                         <%= 
                                         String(user.h).padStart(2, '0') + 
                                         ":" + 
@@ -123,10 +121,6 @@
                                     </div>
                                 </div>
                                 <div class="activity-time">
-                                    <div>
-                                        <span class="muted">Created At:</span>
-                                        <span><%= new Date(user.createdAt).toLocaleTimeString('lt-LT') %></span>
-                                    </div>
                                     <div>
                                         <span class="muted">Last Update:</span>
                                         <span class="last-elapsed" data-created-at="<%= user.stop %>">00:00:00</span>

@@ -27,26 +27,24 @@ async function updateActivities(presence) {
 
         if (JSON.stringify(userData.activities) === JSON.stringify(activities)) return;
 
-        let updateHistory = false;
-        let updateHistoryEntry = { name: '', applicationId: null, start: null, stop: null, createdAt: null };
-
         // Check for started and stopped activities
         activities.forEach(activity => {
             if (!userData.activities.find(a => a.name === activity.name)) {
                 log(`User ${presence.user.tag} started game: ${activity.name}`);
             }
         });
+        
+        let updateHistoryEntrys = [];
 
         userData.activities.forEach(activity => {
             if (!activities.find(a => a.name === activity.name)) {
-                updateHistoryEntry = { ...activity._doc, stop: new Date()}
-                updateHistory = true;
+                updateHistoryEntrys.push({ ...activity._doc, stop: new Date()});
                 log(`User ${presence.user.tag} stopped game: ${activity.name}`);
             }
         });
 
-        if (updateHistory) {
-            // Update history
+        for (let updateHistoryEntry of updateHistoryEntrys) {
+            
             const elapsedSec = Math.floor((new Date(updateHistoryEntry.stop).getTime() - new Date(updateHistoryEntry.start).getTime()) / 1000);
             let h = Math.floor(elapsedSec / 3600);
             let m = Math.floor((elapsedSec % 3600) / 60);
@@ -61,7 +59,9 @@ async function updateActivities(presence) {
                 updateHistoryEntry.s = s;
 
                 userData.history.push({...updateHistoryEntry});
+
             } else {
+
                 userData.history[index].start = updateHistoryEntry.start;
                 userData.history[index].stop = updateHistoryEntry.stop;
                 userData.history[index].s += s;

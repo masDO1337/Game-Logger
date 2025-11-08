@@ -1,4 +1,5 @@
 const express = require('express');
+const UserModel = require('../DBModels/User');
 const router = express.Router();
 
 const verify = require("../Middleware/verify");
@@ -12,7 +13,6 @@ router.get('/', (req, res) => {
         memberCount: guild.memberCount
     }));
 
-
     res.render("guilds", {
         title: "Guilds",
         session: req.session,
@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     const guild = global.client.guilds.cache.get(req.params.id);
     if (!guild) {
         return res.status(404).render("404", { 
@@ -30,10 +30,13 @@ router.get('/:id', (req, res) => {
             owner: 'masDO1337'
         });
     }
+
+    const playedUsers = await UserModel.getIDOfUsersPlayed();
     
     res.render("guild", {
         session: req.session,
-        guild: guild,
+        guild,
+        playedUsers,
         owner: "masDO1337",
     });
 });
