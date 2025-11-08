@@ -24,7 +24,7 @@ async function updateGame(userId, game, findByName = false) {
 
     if (!game.applicationId) {
         log.error("No application ID", game);
-        return;
+        return null;
     }
 
     if (game.applicationId === "438122941302046720") {
@@ -67,9 +67,12 @@ async function updateGame(userId, game, findByName = false) {
             body.splashURL = app.splash ? `https://cdn.discordapp.com/app-icons/${game.applicationId}/${app.splash}.png` : '';
             if (app.name && app.name === 'Xbox') body.iconURL = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg";
         }
+        
+        gameData = await GameModel.create(body);
 
-        if (await GameModel.create(body)) {
+        if (gameData) {
             log(`Created database entry for game ${game.name}`);
+            return gameData._id;
         } else {
             log.error(`Failed to create database entry for game ${game.name}`);
         }
@@ -104,11 +107,12 @@ async function updateGame(userId, game, findByName = false) {
         try {
             await gameData.save();
             log(`Updated database entry for game ${gameData.name}`);
+            return gameData._id;
         } catch (error) {
             log.error(`Failed to update database entry for game ${gameData.name}: ${error}`);
         }
     }
-
+    return null;
 }
 
 module.exports = updateGame;

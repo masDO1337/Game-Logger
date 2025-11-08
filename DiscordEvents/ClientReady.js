@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const UserModel = require('../DBModels/User');
 const updateActivities = require('../DBFunctions/UpdateActivities');
+const updateStatus = require('../DBFunctions/UpdateStatus.js');
 const log = require("../Logger");
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
 
 				if (member.presence) {
 					updateActivities(member.presence);
+					updateStatus(member.presence);
 				}
 			}
 		});

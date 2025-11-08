@@ -1,27 +1,56 @@
 const UserModel = require('../DBModels/User');
+const log = require("../Logger");
 
 async function updateStatus(presence) {
     //console.log(`Updating status for user ${presence.user.tag} to ${presence.status}`);
-    return; // Disabled for now
     const status = presence.status;
+    const timestamp = Date.now();
 
     let userData = await UserModel.findOne({ userId: presence.userId });
     if (userData) {
-        if (userData.status !== status) {
-            userData.status = status;
-            userData.statusSince = new Date();
-            userData.statusDurationMs = 0;
-        } else {
-            const since = userData.statusSince ? new Date(userData.statusSince).getTime() : Date.now();
-            userData.statusDurationMs = Date.now() - since;
+        const prevStatus = userData.status;
+
+        if (status === prevStatus) return;
+
+        const validStatuses = ["online", "idle", "dnd", "offline"];
+        
+        if (!validStatuses.includes(status)) {
+            log.error(`Failed to update status for user ${presence.user.tag} Error: not valid status: ${status}`);
+            return;
         }
+
+        // Update timestamps
+        if (userData.lastStatusChange) {
+            const timeDiff = timestamp - userData.lastStatusChange;
+            userData.statusTimes[prevStatus] = (userData.statusTimes[prevStatus] || 0) + timeDiff;
+        }
+
+        // Calculate total time
+        const totalTime = Object.values(userData.statusTimes).reduce((sum, time) => sum + time, 0);
+
+        // Update percentages
+        if (totalTime > 0) {
+            validStatuses.forEach(s => {
+                userData.statusPercentages[s] = Math.round(((userData.statusTimes[s] || 0) / totalTime) * 100);
+            });
+        }
+
+        // Prevent overflow: if totalTime grows too large, scale all stored times down proportionally
+        const MAX_TOTAL = 86400000;
+        if (totalTime > MAX_TOTAL) {
+            const scale = totalTime / MAX_TOTAL;
+            validStatuses.forEach(s => {userData.statusTimes[s] = Math.max(0, Math.floor((userData.statusTimes[s] || 0) / scale))});
+        }
+
+        userData.status = status;
+        userData.lastStatusChange = timestamp;
+
         try {
-            if (!await userData.save()) {
-                console.log(`Failed to update activities for user ${presence.user.tag}`);
-            }
+            await userData.save();
+            log(`Updated ${presence.user.tag} -> ${status}. Percentages: ${JSON.stringify(userData.statusPercentages)}`);
         } catch (error) {
-            console.error(error);
+            log.error(`Failed to update status for user ${presence.user.tag} Error: ${error}`);
         }
-    } else console.log(`Failed to find database entry for user ${presence.user.tag}`);
+    } else log.error(`Failed to find database entry for user ${presence.user.tag}`);
 }
 module.exports = updateStatus;

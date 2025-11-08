@@ -76,7 +76,8 @@ async function updateActivities(presence) {
                 updateHistoryEntry.s = userData.history[index].s;
             }
 
-            await updateGame(userData.userId, updateHistoryEntry);
+            const gameID = await updateGame(userData.userId, updateHistoryEntry);
+            if (!userData.history[index].gameDB && gameID) userData.history[index].gameDB = gameID;
         }
 
         userData.activities = activities;
