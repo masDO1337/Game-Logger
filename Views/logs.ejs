@@ -57,10 +57,14 @@
     <script>
         const logEntries = document.getElementById('log-entries');
 
+        let oldLog = [];
+
         const evtSource = new EventSource('/events/logs');
-        evtSource.onmessage = function(event) {
+        evtSource.onmessage = (event) => {
             const logs = JSON.parse(event.data);
             logs.forEach(log => {
+                if (oldLog.includes(log)) return;
+                oldLog.push(log);
                 const logEntry = document.createElement('div');
                 logEntry.classList.add("log-entry");
                 if (log.type === 'error') logEntry.classList.add("error");
