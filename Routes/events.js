@@ -25,7 +25,7 @@ function eventHead(res, interval) {
 router.get('/logs', (req, res, next) => {
     if (req.session.role !== "admin") return next();
 
-    let oldLog = [];
+    let oldLog = [...global.logs];
 
     eventHead(res, setInterval(() => {
         if (global.logs && global.logs.length > 0) {

@@ -49,26 +49,29 @@
         <%- include('Layouts/header', { button: { back: true, home: true, logout: true }, session }) -%>
     </div>
     <div class="card" role="main">
-       <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions"></div>
+       <div class="log-entries" id="log-entries" aria-live="polite" aria-relevant="additions">
+            <% if (logs && logs.length > 0) { %>
+                <% logs.forEach(log => { %>
+                    <div class="log-entry <%= (log.type || '') %>">
+                        <span class="muted">[ <%= new Date(log.timestamp).toLocaleString('lt-LT') %> ]</span> 
+                        <%= log.message %>
+                    </div>
+                <% }); %>
+            <% } %>
+       </div>
         <footer>
             <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
         </footer>
     </div>
     <script>
         const logEntries = document.getElementById('log-entries');
-
-        let oldLog = [];
-
         const evtSource = new EventSource('/events/logs');
         evtSource.onmessage = (event) => {
             const logs = JSON.parse(event.data);
             logs.forEach(log => {
-                if (oldLog.includes(log)) return;
-                oldLog.push(log);
                 const logEntry = document.createElement('div');
                 logEntry.classList.add("log-entry");
-                if (log.type === 'error') logEntry.classList.add("error");
-                if (log.type === 'warning') logEntry.classList.add("warning");
+                if (log.type) logEntry.classList.add(log.type);
                 logEntry.innerHTML = `<span class="muted">[ ${new Date(log.timestamp).toLocaleString('lt-LT')} ]</span> ${log.message}`;
                 logEntries.appendChild(logEntry); 
             });
