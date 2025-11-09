@@ -1,6 +1,5 @@
 const express = require('express');
 const UserModel = require('../DBModels/User');
-const GameModel = require('../DBModels/Game');
 const router = express.Router();
 
 const verify = require("../Middleware/verify");
@@ -51,18 +50,10 @@ router.get('/:guild/:user', async (req, res) => {
 
     const username = member.user.globalName == null ? member.user.username : member.user.globalName;
 
-    let history = [];
+    let userData = {};
 
     if (!member.user.bot) {
-        history = await UserModel.getUserHistory(member.user.id);
-        for (const game of history) {
-            const gameData = await GameModel.getGameIDFromName(game.name);
-            if (gameData) {
-                game.gameDB = gameData._id;
-            } else {
-                game.gameDB = '';
-            }
-        }
+        userData = await UserModel.getUserData(member.user.id);
     }
 
     res.render("user", {
@@ -70,7 +61,8 @@ router.get('/:guild/:user', async (req, res) => {
         username: username,
         guild: guild,
         member: member,
-        history: history,
+        statusPercentages: userData.statusPercentages || null,
+        history: userData.history || [],
         owner: 'masDO1337'
     });
 });

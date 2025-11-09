@@ -3,11 +3,9 @@ const log = require("../Logger");
 
 async function updateStatus(presence) {
     //console.log(`Updating status for user ${presence.user.tag} to ${presence.status}`);
-    const status = presence.status;
-    const timestamp = Date.now();
-
     let userData = await UserModel.findOne({ userId: presence.userId });
     if (userData) {
+        const status = presence.status;
         const prevStatus = userData.status;
 
         if (status === prevStatus) return;
@@ -19,9 +17,11 @@ async function updateStatus(presence) {
             return;
         }
 
+        const timestamp = Date.now();
+
         // Update timestamps
         if (userData.lastStatusChange) {
-            const timeDiff = timestamp - userData.lastStatusChange;
+            const timeDiff = Math.floor((timestamp - userData.lastStatusChange) / 1000);
             userData.statusTimes[prevStatus] = (userData.statusTimes[prevStatus] || 0) + timeDiff;
         }
 
@@ -47,7 +47,7 @@ async function updateStatus(presence) {
 
         try {
             await userData.save();
-            log(`Updated ${presence.user.tag} -> ${status}. Percentages: ${JSON.stringify(userData.statusPercentages)}`);
+            log(`Updated User: ${presence.user.tag} status: ${prevStatus} -> ${status}`);
         } catch (error) {
             log.error(`Failed to update status for user ${presence.user.tag} Error: ${error}`);
         }

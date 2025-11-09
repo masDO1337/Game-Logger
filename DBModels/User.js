@@ -46,9 +46,9 @@ const User = mongoose.model('User', userSchema);
 
 module.exports = User;
 
-module.exports.getUserHistory = async (userId) => {
-    const userData = await User.findOne({ userId: userId });
-    return userData ? userData.history : [];
+module.exports.getUserData = async (userId) => {
+    const userData = await User.findOne({ userId: userId }).select(['history', 'statusPercentages']);
+    return userData ? userData : null;
 };
 
 module.exports.getIDOfUsersPlayed = async () => {

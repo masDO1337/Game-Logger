@@ -31,8 +31,3 @@ module.exports.getGame = async (id) => {
     const gameData = await Game.findOne({ _id: id });
     return gameData ? gameData : null;
 };
-
-module.exports.getGameIDFromName = async (name) => {
-  const gameData = await Game.findOne({ name: name }).select(["_id"]);
-  return gameData ? gameData : null;
-};
