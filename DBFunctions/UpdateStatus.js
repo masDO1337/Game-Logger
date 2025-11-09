@@ -21,7 +21,7 @@ async function updateStatus(presence) {
 
         // Update timestamps
         if (userData.lastStatusChange) {
-            const timeDiff = Math.floor((timestamp - userData.lastStatusChange) / 1000);
+            const timeDiff = (timestamp - userData.lastStatusChange);
             userData.statusTimes[prevStatus] = (userData.statusTimes[prevStatus] || 0) + timeDiff;
         }
 
@@ -36,7 +36,7 @@ async function updateStatus(presence) {
         }
 
         // Prevent overflow: if totalTime grows too large, scale all stored times down proportionally
-        const MAX_TOTAL = 86400000;
+        const MAX_TOTAL = 1382400000;
         if (totalTime > MAX_TOTAL) {
             const scale = totalTime / MAX_TOTAL;
             validStatuses.forEach(s => {userData.statusTimes[s] = Math.max(0, Math.floor((userData.statusTimes[s] || 0) / scale))});
