@@ -61,6 +61,7 @@ router.get('/:guild/:user', async (req, res) => {
         username: username,
         guild: guild,
         member: member,
+        statusTimes: userData.statusTimes || null,
         statusPercentages: userData.statusPercentages || null,
         history: userData.history || [],
         owner: 'masDO1337'

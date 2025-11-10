@@ -47,7 +47,7 @@ const User = mongoose.model('User', userSchema);
 module.exports = User;
 
 module.exports.getUserData = async (userId) => {
-    const userData = await User.findOne({ userId: userId }).select(['history', 'statusPercentages']);
+    const userData = await User.findOne({ userId: userId }).select(['history', 'statusPercentages','statusTimes']);
     return userData ? userData : null;
 };
 
