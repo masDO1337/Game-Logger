@@ -47,7 +47,7 @@ async function updateStatus(presence) {
 
         try {
             await userData.save();
-            log(`Updated User: ${presence.user.tag} status: ${prevStatus} -> ${status}`);
+            //log(`Updated User: ${presence.user.tag} status: ${prevStatus} -> ${status}`);
         } catch (error) {
             log.error(`Failed to update status for user ${presence.user.tag} Error: ${error}`);
         }
