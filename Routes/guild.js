@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
         });
     }
 
-    const playedUsers = await UserModel.getIDOfUsersPlayed();
+    const playedUsers = await UserModel.getIdOfUsersPlayed();
     
     res.render("guild", {
         session: req.session,

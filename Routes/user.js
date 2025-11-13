@@ -5,6 +5,30 @@ const router = express.Router();
 const verify = require("../Middleware/verify");
 router.use(verify);
 
+router.get('/', async (req, res) => {
+    let Playing = [];
+    
+    const users = await UserModel.getUsersPlaying();
+
+    for (const user of users) {
+        const u = await global.client.users.fetch(user.userId);
+        Playing.push({
+            activities: user.activities,
+            id: u.id,
+            tag: u.tag,
+            username: u.globalName == null ? u.username : u.globalName,
+            avatar: u.displayAvatarURL({ format: "png", size: 64 }),
+        });
+    }
+
+    res.render("users", {
+        title: "Playing Now",
+        session: req.session,
+        playing: Playing,
+        owner: 'masDO1337'
+    });
+});
+
 router.get("/:user", async (req, res) => {
     let guildID = null;
 

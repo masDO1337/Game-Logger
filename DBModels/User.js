@@ -51,7 +51,27 @@ module.exports.getUserData = async (userId) => {
     return userData ? userData : null;
 };
 
-module.exports.getIDOfUsersPlayed = async () => {
+module.exports.getIdOfUsersPlayed = async () => {
     const userData = await User.find({"history": {"$exists": true, "$not": {"$size": 0}}}).select('userId');
     return userData ? userData.reduce((a, user) => {a.push(user.userId); return a}, []) : [];
+};
+
+module.exports.getUsersPlaying = async () => {
+    const userData = await User.find({"activities": {"$exists": true, "$not": {"$size": 0}}}).select(['userId','activities']);
+    return userData ? userData : [];
+};
+
+module.exports.getUsersPlayingThatGame = async (name) => {
+    const userData = await User.find({"activities": {"$elemMatch": {"name": name}}}).select(['userId','activities']);
+    return userData ? userData.reduce((a, user) => {
+        let start = null;
+
+        for (const activity of user.activities) {
+            if (activity.name !== name) continue;
+            start = activity.start;
+        }
+
+        a.push({ userId: user.userId, start: start}); 
+        return a;
+    }, []) : [];
 };

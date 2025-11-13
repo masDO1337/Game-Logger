@@ -5,25 +5,22 @@ const UserModel = require('../DBModels/User');
 async function refreshToken(req, res, next) {
     const refreshToken = req.cookies?.refreshToken || null;
     if (!refreshToken) {
-        req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
-        return res.redirect("/login");
+        return res.redirect("/logout");
     }
 
     let userData = await UserModel.findOne({ refreshToken: refreshToken }).select(['userId', 'role']);
     
     if (!userData) {
         log.error(`Refresh token not found in database, logging out user: ${req.session.name}.`);
-        req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
-        res.clearCookie("refreshToken", { httpOnly: true, secure: true });
-        return res.redirect("/login");
+        return res.redirect("/logout");
     }
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) {
+        if (err && err.name !== 'TokenExpiredError') {
             log.error(`Invalid refresh token, logging out user: ${req.session.name}.`);
-            req.session.destroy(function (err) { if (err) console.log("Error destroying session:", err) });
-            res.clearCookie("refreshToken", { httpOnly: true, secure: true });
-            return res.redirect("/login");
+            return res.redirect("/logout");
+        } else if (err && err.name === 'TokenExpiredError') {
+            return res.redirect("/logout");
         } else {
             req.session.accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
             req.session.role = userData.role || "anonymous";
@@ -42,33 +39,32 @@ async function restoreSession(req, res, next) {
     
     if (!userData) {
         log.error("Refresh token not found in database, clearing cookie.");
-        res.clearCookie('refreshToken', { httpOnly: true, secure: true });
-        return res.redirect("/login");
+        return res.redirect("/logout");
     }
 
     let User = await global.client.users.fetch(userData.userId).catch(() => null);
 
     if (!User) {
         log.error("User not found in Discord, clearing cookie.");
-        res.clearCookie('refreshToken', { httpOnly: true, secure: true });
-        return res.redirect("/login");
+        return res.redirect("/logout");
     }
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) {
+        if (err && err.name !== 'TokenExpiredError') {
             log.error("Invalid refresh token, clearing cookie.");
-            res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+            return res.redirect("/logout");
+        } else if (err && err.name === 'TokenExpiredError') {
             return res.redirect("/login");
         } else {
             req.session.accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+            req.session.userId = userData.userId;
+            req.session.role = userData.role || "anonymous";
+            req.session.name = User.tag;
+            req.session.avatar = User.displayAvatarURL({ size: 64 });
+            log(`Website restored session for user: ${User.tag}`);
+            next();
         }
     });
-    req.session.userId = userData.userId;
-    req.session.role = userData.role || "anonymous";
-    req.session.name = User.tag;
-    req.session.avatar = User.displayAvatarURL({ size: 64 });
-    log(`Website restored session for user: ${User.tag}`);
-    next();
 }
 
 
