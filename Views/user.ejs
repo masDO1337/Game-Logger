@@ -137,21 +137,23 @@
             </section>
             <section class="panel" aria-label="User activities">
                 <div>
-                    <h4 style="margin: 16px 0 8px 0;">Status</h4>
-                    <div class="status" aria-live="polite">
-                        <% if (member.presence) { %>
-                            <% if (member.presence.status == 'online') { %>
-                                <span class="dot" style="background:var(--success)"></span> Online
-                            <% } else if (member.presence.status == 'idle') { %>
-                                <span class="dot" style="background:var(--warning)"></span> Idle
-                            <% } else if (member.presence.status == 'dnd') { %>
-                                <span class="dot" style="background:var(--danger)"></span> Do Not Disturb
+                    <div style="display: flex;">
+                        <div class="status" style="margin: 0; font-size: 16px;">Status</div>
+                        <div class="status" aria-live="polite">
+                            <% if (member.presence) { %>
+                                <% if (member.presence.status == 'online') { %>
+                                    <span class="dot" style="background:var(--success)"></span> Online
+                                <% } else if (member.presence.status == 'idle') { %>
+                                    <span class="dot" style="background:var(--warning)"></span> Idle
+                                <% } else if (member.presence.status == 'dnd') { %>
+                                    <span class="dot" style="background:var(--danger)"></span> Do Not Disturb
+                                <% } else { %>
+                                    <span class="dot" style="background:var(--muted)"></span> Offline
+                                <% } %>
                             <% } else { %>
                                 <span class="dot" style="background:var(--muted)"></span> Offline
                             <% } %>
-                        <% } else { %>
-                            <span class="dot" style="background:var(--muted)"></span> Offline
-                        <% } %>
+                        </div>
                     </div>
                     <% if (statusPercentages && statusTimes) { %>
                         <div style="height: 24px;">
@@ -205,57 +207,39 @@
                     </div>
                 <% } %>
                 <% if (!member.user.bot) { %>
-                    <div style="margin-bottom: 50px;">
-                        <h4 style="margin: 16px 0 8px 0;">History Of Games</h4>
-                        <div class="activity-time" style="text-align: center;">
-                            <span class="muted">Total time of games palyed:</span>
-                            <% 
-                            const sum = history.reduce((a, game) => {
-                                a.s += game.s;
-                                a.m += game.m + Math.floor(a.s / 60); 
-                                a.s %= 60; 
-                                a.h += game.h + Math.floor(a.m / 60);
-                                a.m %= 60;
-
-                                return a;
-                            }, { h: 0, m: 0, s: 0 });
-                            %>
-                            <%= 
-                            String(sum.h).padStart(2, '0') + 
-                            ":" + 
-                            String(sum.m).padStart(2, '0') + 
-                            ":" + 
-                            String(sum.s).padStart(2, '0')
-                            %>
-                        </div>
+                    <div>
                         <% if (history && history.length > 0) { %>
+                            <h4 style="margin: 16px 0 8px 0;">History Of Games</h4>
                             <div class="list">
+                                <div class="text center">
+                                    <div class="activity-time">
+                                        <span class="muted">Total time of games palyed:</span>
+                                        <% 
+                                        const sum = history.reduce((a, game) => {
+                                            a.s += game.s;
+                                            a.m += game.m + Math.floor(a.s / 60); 
+                                            a.s %= 60; 
+                                            a.h += game.h + Math.floor(a.m / 60);
+                                            a.m %= 60;
+
+                                            return a;
+                                        }, { h: 0, m: 0, s: 0 });
+                                        %>
+                                        <%= String(sum.h).padStart(2, '0') + ":" + String(sum.m).padStart(2, '0') + ":" + String(sum.s).padStart(2, '0') %>
+                                    </div>
+                                </div>
                                 <% history.forEach(function(activity) { %>
                                     <a href="/game/<%=(activity.gameDB || "") %>">
                                         <div class="center" style="align-items: start;"><%= activity.name %></div>
                                         <div class="activity-time">
                                             <div>
                                                 <span class="muted">Last Played:</span>
-                                                <% 
-                                                const elapsedSec = Math.floor((new Date(activity.stop).getTime() - new Date(activity.start).getTime()) / 1000);
-                                                %>
-                                                <%= 
-                                                String(Math.floor(elapsedSec / 3600)).padStart(2, '0') + 
-                                                ":" + 
-                                                String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0') + 
-                                                ":" + 
-                                                String(elapsedSec % 60).padStart(2, '0')
-                                                %>
+                                                <% const elapsedSec = Math.floor((new Date(activity.stop).getTime() - new Date(activity.start).getTime()) / 1000); %>
+                                                <%= String(Math.floor(elapsedSec / 3600)).padStart(2, '0') + ":" + String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0') + ":" + String(elapsedSec % 60).padStart(2, '0') %>
                                             </div>
                                             <div>
                                                 <span class="muted">Total Played:</span>
-                                                <%= 
-                                                String(activity.h).padStart(2, '0') + 
-                                                ":" + 
-                                                String(activity.m).padStart(2, '0') + 
-                                                ":" + 
-                                                String(activity.s).padStart(2, '0')
-                                                %>
+                                                <%= String(activity.h).padStart(2, '0') + ":" + String(activity.m).padStart(2, '0') + ":" + String(activity.s).padStart(2, '0') %>
                                             </div>
                                         </div>
                                     </a>

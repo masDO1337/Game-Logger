@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title><%= title || 'Discord Bot' %></title>
     <link rel="stylesheet" href="/Style/global.css" />
-    <style>
-    </style>
 </head>
 <body>
     <div class="card" style="margin-bottom: 36px;" role="header">
@@ -35,14 +33,14 @@
                     </a>
                 <% }); %>
             <% } else { %>
-                <div class="center"></div>
-                    <p style="color:#666; margin:20px 0;">No users are playing right now.</p>
+                <div class="center">
+                    <p style="color: var(--muted); margin:20px 0;">No users are playing right now.</p>
                 </div>
             <% } %>
+            <footer>
+                <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
+            </footer>
         </div>
-        <footer>
-            <div><%= owner || 'Bot Owner' %> • <span id="year"><%= new Date().getFullYear() %></span></div>
-        </footer>
     </div>
     <script src="/Scripts/timer.js"></script>
 </body>
