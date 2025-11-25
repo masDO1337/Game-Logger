@@ -240,6 +240,12 @@ h1 {
     height: 24px;
 }
 
+.btn-box {
+    max-width: 36px;
+    min-height: 36px;
+    padding: 0 6px;
+}
+
 .input-group {
     position: relative;
 }
@@ -325,7 +331,7 @@ footer {
     }
 
     .list {
-        padding: 0;
+        padding: 2px 0;
     }
 
     .list a {

@@ -160,18 +160,12 @@
                             <div class="status-bar">
                                 <% const names = ["Online","Idle","Do Not Disturb","Offline"]; %>
                                 <% ["online","idle","dnd","offline"].forEach((name, index) => { %>
-                                    <div class="<%= name %>" style="width: <%= statusPercentages[name] %>%" title="<%= names[index] %> <%= statusPercentages[name] %>%">
-                                        <p><%= names[index] %> <%= statusPercentages[name] %>%  
-                                            <% 
-                                            const elapsedSec = Math.floor(statusTimes[name] / 1000);
-                                            %>
-                                            <%= 
-                                            String(Math.floor(elapsedSec / 3600)).padStart(2, '0') + 
-                                            ":" + 
-                                            String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0') + 
-                                            ":" + 
-                                            String(elapsedSec % 60).padStart(2, '0')
-                                            %>
+                                    <% if (statusPercentages[name] === 0) return %>
+                                    <% const elapsedSec = Math.floor(statusTimes[name] / 1000); %>
+                                    <div class="<%= name %>" style="width: <%= Math.round(statusPercentages[name] * 1.1) %>%" title="<%= names[index] %> <%= statusPercentages[name] %>%">
+                                        <p>
+                                            <%= names[index] %> <%= statusPercentages[name] %>%
+                                            <%= String(Math.floor(elapsedSec / 3600)).padStart(2, '0') + ":" + String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, '0') + ":" + String(elapsedSec % 60).padStart(2, '0') %>
                                         </p>
                                     </div>
                                 <% }) %>
