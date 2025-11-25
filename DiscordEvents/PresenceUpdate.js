@@ -16,13 +16,6 @@ module.exports = {
         // compute a simple signature of current activities (only names for type 0), sorted for stability
         const userId = newPresence.userId || newPresence.user?.id;
 
-        const oldSignature = JSON.stringify(
-          (oldPresence?.activities || [])
-            .filter((a) => a.type === 0)
-            .map((a) => a.name)
-            .sort()
-        );
-
         const newSignature = JSON.stringify(
             (newPresence.activities || [])
                 .filter(a => a.type === 0)
@@ -42,10 +35,8 @@ module.exports = {
                 if (recentPresence.get(userId) === signature) recentPresence.delete(userId);
             }, 2000);
         }
-
-        if (oldSignature !== newSignature) {
-            await updateActivities(newPresence);
-        }
+        
+        await updateActivities(newPresence);
 
         if (oldPresence?.status !== newPresence.status) {
           await updateStatus(newPresence);
