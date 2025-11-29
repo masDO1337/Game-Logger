@@ -12,6 +12,7 @@
         "Routes/",
         "Middleware/",
         "DiscordEvents/",
+        "DiscordCommands/",
         "DBModels/",
         "DBFunctions/"
     ],
